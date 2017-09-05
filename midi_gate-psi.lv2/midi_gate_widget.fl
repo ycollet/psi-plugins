@@ -1,0 +1,249 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"} {public global
+} 
+
+decl {\#include <FL/Fl_Value_Output.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Value_Input.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Dial.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Double_Window.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Slider.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Fill_Slider.H>} {public global
+} 
+
+decl {\#include <FL/Fl_PNG_Image.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Tooltip.H>} {public global
+} 
+
+decl {\#include "UI/Envelope.H"} {public global
+} 
+
+decl {\#include "UI/psiDialX.H"} {public global
+} 
+
+decl {\#include "UI/PeakMeter.H"} {public global
+} 
+
+decl {\#include "UI/psiLabelBox.H"} {public global
+} 
+
+decl {\#include "midi_gate.h"} {public global
+} 
+
+decl {\#include <math.h>} {public global
+} 
+
+decl {\#ifndef LV2_DIR 
+\#define LV2_DIR "/usr/lib64/lv2" 
+\#endif
+} {public global
+} 
+
+class MidiGateUI {open
+} {
+  Function {update_button(int button)} {open return_type void
+  } {
+    code {} {}
+  }
+  Function {MidiGateUI()} {open
+  } {
+    Fl_Window window {open
+      xywh {461 180 365 240} type Double color 48 resizable
+      code2 {using namespace std;}
+      code3 {
+          Fl_Theme::set( "Gleam");
+          Fl_Tooltip::color(FL_BLACK);
+          Fl_Tooltip::textcolor(221);
+          Fl_Tooltip::size(11);
+
+          Fl_Dial::default_style(Fl_Dial::PIXMAP_DIAL);
+          Fl_PNG_Image* dial_image = new Fl_PNG_Image( LV2_DIR "/midi_gate-psi.lv2/knob.png");
+          Fl_Image* dimage = dial_image->copy();
+          psiDialX::default_image(dimage);} visible
+    } {
+      Fl_Box {} {
+        xywh {290 77 30 1} box EMBOSSED_FRAME color 80 selection_color 80
+      }
+      Fl_Box {} {
+        label {psi MIDI Gate}
+        xywh {0 0 365 240} selection_color 80
+        code0 {o->label_align( 125, 15, LBL_LEFT, 5, 10, BOX_NORMAL);}
+        class psiLabelBox
+      }
+      Fl_Dial hold {
+        label Hold
+        callback {hold_out->value(o->value());
+adsr_box->sustain(hold->value());
+writePort( int(MIDIGATE_HOLD),o->value());} selected
+        tooltip {The time the gate is kept open} xywh {90 140 50 50} color 72 labelsize 10 align 514 maximum 2000 step 1 value 100
+        class psiDialX
+      }
+      Fl_Dial attack {
+        label Attack
+        callback {attack_out->value(o->value());
+adsr_box->attack(attack->value());
+writePort( int(MIDIGATE_ATTACK),o->value());} selected
+        tooltip {The time it takes to fully open the gate after once a note-on is recieved} xywh {25 140 50 50} color 72 labelsize 10 maximum 1000 step 1 value 20
+        class psiDialX
+      }
+      Fl_Dial release {
+        label Release
+        callback {release_out->value(o->value());
+adsr_box->release(release->value());
+writePort( int(MIDIGATE_DECAY),o->value());} selected
+        tooltip {The time it takes to release the gate once the hold time has been attained} xywh {155 140 50 50} color 72 labelsize 10 minimum 1 maximum 4000 step 1 value 50
+        code0 {//release->pixmap(new Fl_XPM_Image("UI/knob-metal1.png"));}
+        code1 {release->type(Fl_Dial::PIXMAP_DIAL);}
+        class psiDialX
+      }
+      Fl_Value_Input attack_out {
+        callback {attack->value(o->value());
+writePort( int(MIDIGATE_ATTACK),o->value());
+adsr_box->attack(attack_out->value());} selected
+        xywh {30 205 40 20} align 8 maximum 1000 step 1 value 20 textsize 10
+        code3 {o->visible_focus(0);}
+        class Fl_Value_Input
+      }
+      Fl_Value_Input hold_out {
+        callback {hold->value(o->value());
+adsr_box->sustain(hold_out->value());
+writePort( int(MIDIGATE_HOLD),o->value());} selected
+        xywh {95 205 40 20} align 8 maximum 2000 step 1 value 100 textsize 10
+        code3 {o->visible_focus(0);}
+        class Fl_Value_Input
+      }
+      Fl_Value_Input release_out {
+        callback {release->value(o->value());
+adsr_box->release(release_out->value());
+writePort( int(MIDIGATE_DECAY),o->value());} selected
+        tooltip {The time it takes to release the gate once the hold time has been attained} xywh {160 205 40 20} align 8 maximum 4000 step 1 value 20 textsize 10
+        code3 {o->visible_focus(0);}
+        class Fl_Value_Input
+      }
+      Fl_Value_Slider range {
+        callback {range_out->value(o->value());
+adsr_box->set_range(range_out->value());
+writePort( int(MIDIGATE_RANGE),o->value());}
+        tooltip {The amount of signal reduction when the gate is closed (dB)} xywh {295 40 20 165} box ROUND_UP_BOX labelsize 10 align 1 minimum 20 maximum -70 step 1 value -25
+        code3 {o->visible_focus(0);}
+        class Fl_Slider
+      }
+      Fl_Light_Button noteon {
+        label {Note On}
+        callback {if (o->value()==1) {
+   writePort(int(MIDIGATE_PROGRAM),0);
+   noteoff->value(0);	
+} else {
+   writePort(int(MIDIGATE_PROGRAM),1);
+   noteoff->value(1);	
+}}
+        tooltip {Open the gate on MIDI Note On} xywh {220 145 60 20} value 1 selection_color 80 labelsize 10
+        code3 {o->visible_focus(0);}
+      }
+      Fl_Value_Slider level {
+        xywh {330 40 20 165} box ROUND_UP_BOX labelsize 10 align 1 minimum 6 maximum -70 value -70
+        code3 {o->visible_focus(0);}
+        class {psi::PeakMeter}
+      }
+      Fl_Light_Button noteoff {
+        label {Note Off}
+        callback {if (o->value()==1) {
+   writePort(int(MIDIGATE_PROGRAM),1);
+   noteon->value(0);	
+} else {
+   writePort(int(MIDIGATE_PROGRAM),0);
+   noteon->value(1);	
+}}
+        tooltip {Open the gate on MIDI Note Off} xywh {220 165 60 20} selection_color 72 labelsize 10
+        code3 {o->visible_focus(0);}
+      }
+      Fl_Light_Button gate_state {
+        label Open
+        tooltip {The current gate state} xywh {220 10 60 20} box ROUND_UP_BOX value 1 selection_color 72 labelsize 10 when 6
+        code3 {o->visible_focus(0);}
+      }
+      Fl_Light_Button select {
+        label Bypass
+        callback {writePort( int(MIDIGATE_SELECT),o->value());}
+        xywh {155 10 60 20} selection_color 72 labelsize 10
+        code3 {o->visible_focus(0);}
+      }
+      Fl_Box adsr_box {
+        xywh {10 40 270 90} box THIN_UP_BOX labeltype NO_LABEL align 514
+        code0 {o->set_range(-70.0f,20.0f,7000.0f,-25.0f);}
+        class {psi::Envelope}
+      }
+      Fl_Value_Input range_out {
+        callback {range->value(o->value());
+adsr_box->set_range(range_out->value());
+writePort( int(MIDIGATE_RANGE),o->value());}
+        tooltip {The amount of signal reduction when the gate is closed (dB)} xywh {295 205 20 20} align 8 minimum 20 maximum -70 step 1 value -25 textsize 10
+        code3 {o->visible_focus(0);}
+        class Fl_Value_Input
+      }
+      Fl_Output {} {
+        label Range
+        xywh {325 10 5 24} box NO_BOX labelsize 10 align 68
+      }
+      Fl_Output {} {
+        label Db
+        xywh {350 11 5 24} box NO_BOX labelsize 10 align 68
+      }
+      Fl_Output {} {
+        label Trigger
+        xywh {265 186 5 24} box NO_BOX labelsize 10 align 68
+      }
+      Fl_Value_Output level_out {
+        xywh {330 205 20 20} box DOWN_BOX align 10 minimum -70 maximum 6 step 1 value -70 textsize 10
+        code3 {o->visible_focus(0);}
+        class Fl_Value_Input
+      }
+    }
+  }
+  decl {LV2UI_Write_Function write_function;} {public local
+  }
+  decl {LV2UI_Controller controller;} {public local
+  }
+  Function {idle()} {open return_type void
+  } {
+    code {Fl::check();
+Fl::flush();} {}
+  }
+  Function {getWidth()} {open return_type int
+  } {
+    code {return window->w();} {}
+  }
+  Function {getHeight()} {open return_type int
+  } {
+    code {return window->h();} {}
+  }
+  decl {float gain;} {private local
+  }
+  decl {float cutoff;} {private local
+  }
+  decl {float Q;} {private local
+  }
+  Function {writePort(int port, float value)} {open
+  } {
+    code {write_function(controller, port, sizeof(float), 0, &value);} {}
+  }
+  decl {\#include <FL/Fl_Slider.H>} {public global
+  }
+} 
+
+decl {\#include <FL/Fl_Theme.H>} {public global
+} 

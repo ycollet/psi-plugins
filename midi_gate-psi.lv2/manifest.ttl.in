@@ -1,0 +1,18 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
+
+<http://bjones.it/psi-plugins/midi_gate>
+    a lv2:Plugin ;
+    lv2:binary <midi_gate@LIB_EXT@> ;
+    rdfs:seeAlso <midi_gate.ttl> .
+
+@prefix guiext: <http://lv2plug.in/ns/extensions/ui#>.
+
+<http://bjones.it/psi-plugins/midi_gate/ui>
+  a ui:X11UI;
+  ui:binary <midi_gate_ui.so> ;
+  lv2:extensionData ui:idle;
+  lv2:optionalFeature ui:noUserResize ;
+  .
+  

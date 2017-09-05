@@ -1,0 +1,1075 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <math.h>} {public global
+} 
+
+decl {\#include <FL/Fl_Value_Output.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Value_Input.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Int_Input.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Dial.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Double_Window.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Slider.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Fill_Slider.H>} {public global
+} 
+
+decl {\#include <FL/Fl_XPM_Image.H>} {public global
+} 
+
+decl {\#include <FL/Fl_PNG_Image.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Menu_Item.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Theme.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Tooltip.H>} {public global
+} 
+
+decl {\#include "UI/Envelope.H"} {public global
+} 
+
+decl {\#include "UI/psiDialX.H"} {public global
+} 
+
+decl {\#include "UI/psiLabelBox.H"} {public global
+} 
+
+decl {\#include "UI/PeakMeter.H"} {public global
+} 
+
+decl {\#include "UI/Fader.H"} {public global
+} 
+
+decl {\#include "UI/psiLFO.H"} {public global
+} 
+
+decl {\#include "UI/psiENV.H"} {public global
+} 
+
+decl {\#include "UI/psiDialX_Mod.H"} {public global
+} 
+
+decl {\#include "super_welle.h"} {public global
+} 
+
+decl {\#include "UI/psiMidiMapping.H"} {public global
+} 
+
+decl {\#include "common/voice_params.h"
+    \#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"} {public global
+} 
+
+decl {\#define UI_CLASS SuperWelleUI} {public global
+} 
+
+decl {\#ifndef LV2_DIR 
+\#define LV2_DIR "/usr/lib64/lv2" 
+\#endif} {public global
+} 
+
+class SuperWelleUI {open
+} {
+  Function {update_button(int button)} {open return_type void
+  } {
+    code {} {}
+  }
+  Function {SuperWelleUI()} {open
+  } {
+    Fl_Window window {open
+      xywh {838 416 785 625} type Double align 0
+      code2 {using namespace std;}
+      code3 {Fl_Theme::set( "Vector");
+          Fl_Tooltip::color(FL_BLACK);
+          Fl_Tooltip::textcolor(221);
+          Fl_Tooltip::size(11);
+          Fl_Dial::default_style(Fl_Dial::PIXMAP_DIAL);
+          Fl_PNG_Image* dial_image = new Fl_PNG_Image( LV2_DIR "/super_welle-psi.lv2/knob.png");
+          Fl_Image* dimage = dial_image->copy();
+          psiDialX::default_image(dimage);
+          midi_learn_on = 0;
+          default_draw_value_box = 0;}
+      class Fl_Double_Window non_modal visible
+    } {
+      Fl_Box mainbox {
+        label {psi Super Welle}
+        xywh {0 0 785 625} box BORDER_BOX labelcolor 32
+        code0 {o->label_align( 125, 15, LBL_LEFT, 5, 10, BOX_NORMAL);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label OSC2
+        xywh {5 125 580 90} box BORDER_BOX color 47 labelcolor 60
+        code0 {o->label_align( 38, 15, LBL_LEFT, 5, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label GLOBAL
+        xywh {5 410 775 210} box BORDER_BOX color 50 labelcolor 54
+        code0 {o->label_align( 50, 15, LBL_LEFT, 5, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label OSC1
+        xywh {5 30 580 90} box BORDER_BOX color 47 labelcolor 221
+        code0 {o->label_align( 38, 15, LBL_LEFT, 5, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label MIX
+        xywh {560 415 215 200} box BORDER_BOX color 48 labelcolor 52
+        code0 {o->label_align( 42, 15, LBL_CENTER, 85, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label {Filter 1}
+        xywh {5 220 290 90} box BORDER_BOX color 48 labelcolor 221
+        code0 {o->label_align( 40, 15, LBL_CENTER, 127, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label {Filter 2}
+        xywh {300 220 285 90} box BORDER_BOX color 48 labelcolor 60
+        code0 {o->label_align( 40, 15, LBL_CENTER, 122, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label DELAY
+        xywh {260 430 295 90} box BORDER_BOX labelcolor 52
+        code0 {o->label_align( 50, 15, LBL_LEFT, 5, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label {Filter 3}
+        xywh {10 430 245 90} box BORDER_BOX color 48 labelcolor 52
+        code0 {o->label_align( 40, 15, LBL_CENTER, 102, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label {Filter 4}
+        xywh {10 525 245 90} box BORDER_BOX color 48 labelcolor 52
+        code0 {o->label_align( 40, 15, LBL_CENTER, 102, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label { }
+        xywh {250 47 185 58} box BORDER_BOX color 50 labelcolor 51
+        code0 {o->label_align( 0, 0, LBL_LEFT,5, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label { }
+        xywh {250 142 185 58} box BORDER_BOX color 50 labelcolor 51
+        code0 {o->label_align( 0, 0, LBL_LEFT,5, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label { }
+        xywh {350 237 135 58} box BORDER_BOX color 50 labelcolor 51
+        code0 {o->label_align( 0, 0, LBL_LEFT,5, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label { }
+        xywh {65 447 135 58} box BORDER_BOX color 50 labelcolor 51
+        code0 {o->label_align( 0, 0, LBL_LEFT,5, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Box {} {
+        label { }
+        xywh {65 542 135 58} box BORDER_BOX color 50 labelcolor 51
+        code0 {o->label_align( 0, 0, LBL_LEFT,5, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Dial osc1_wave {
+        label Shape
+        callback {writePort( V_OS1_SHP,o->value());}
+        tooltip {Oscillator 1 wave shape} xywh {20 42 40 58} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 6 step 1
+        code0 {const char *a[7];
+                a[0] = "Sine";
+                a[1] = "Triangle";
+                a[2] = "Saw";
+                a[3] = "Rev Saw";
+                a[4] = "Square";
+                a[5] = "Stair";
+                a[6] = "Pulse";
+                o->display_values_set(a, 7);
+                o->draw_val_box = 1;}
+        class psiDialX
+      }
+      Fl_Dial osc1_distortion {
+        label Dist
+        callback {writePort( V_OS1_DST,o->value());}
+        tooltip {Oscillator 1 wave-shaping distortion ampunt} xywh {205 50 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.01
+        class psiDialX
+      }
+      Fl_Dial polyphony {
+        label Polyphony
+        callback {writePort( V_PLY, o->value());}
+        tooltip {Maximum number of voices. Select 1 for legato.} xywh {275 525 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum 1 maximum 16 step 1 value 16
+        class psiDialX
+      }
+      Fl_Dial glide {
+        label Glide
+        callback {writePort( V_GLIDE, o->value());}
+        tooltip {Glide time between the current note and the last note} xywh {330 525 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 step 0.01
+        class psiDialX
+      }
+      Fl_Box {} {
+        label { }
+        xywh {60 237 135 58} box BORDER_BOX color 51 labelcolor 51
+        code0 {o->label_align( 0, 0, LBL_LEFT,5, 10, BOX_ROUND);}
+        class psiLabelBox
+      }
+      Fl_Dial feedback_l {
+        label {Amount L}
+        callback {
+const bool lock = (delay_fblock->color() == FL_GRAY);
+const bool sync = ( strcmp(delay_sync->label(), "On") == 0);
+if (lock)
+{
+   feedback_r->value(o->value());
+   writePort( V_DLY_FBR, feedback_r->value(),sync); 
+}
+writePort( V_DLY_FBL, o->value(), sync);
+        }
+        xywh {275 452 40 43} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.01
+        class psiDialX
+      }
+      Fl_Dial delay_timel {
+        label {Delay L}
+        callback {
+bool sync = (strcmp(delay_sync->label(), "Off")!=0);
+bool lock = (delay_lock->color() == FL_GRAY);
+
+
+if (lock)
+{
+   delay_timer->value(o->value());
+   writePort( V_DLY_TMR, delay_timer->value(), sync); 
+}
+writePort( V_DLY_TML, o->value(), sync);
+        }
+        xywh {420 453 40 42} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 step 0.01
+        class psiDialX
+      }
+      Fl_Box {} {
+        label Sync
+        xywh {380 437 30 13} labelsize 9 labelcolor 221
+      }
+      Fl_Button delay_sync {
+        label Off
+        callback {
+if (strcmp(delay_sync->label(), "Off") == 0)
+{
+    writePort( V_DLY_BPM, 1.0, 0);
+    delay_sync->label("On");
+} else {
+   writePort( V_DLY_BPM, 0.0, 0);
+   delay_sync->label("Off"); 
+}
+}
+        tooltip {Sync delay to BPM} xywh {411 435 40 15} down_box BORDER_BOX labelsize 10
+        code0 {o->visible_focus(0);}
+      }
+      Fl_Value_Slider filter_mix {
+        label F4
+        callback {writePort( V_F_MIX,o->value());}
+        tooltip {Adjusts the balance between filter 13 and filter 4 outputs.} xywh {605 450 20 140} type {Vert Knob} box NO_BOX labelsize 10 labelcolor 221 minimum 1 maximum 0 step 0.001
+        code0 {o->visible_focus(0);}
+        class {psi::Fader}
+      }
+      Fl_Value_Slider osc_mix {
+        label OSC2
+        callback {writePort( V_OSC_MIX,o->value());}
+        tooltip {Adjust the balance between OSC1 and OSC2 when they are used together as input for global filters 3 or 4.} xywh {575 450 20 140} type {Vert Knob} box NO_BOX labelsize 10 labelcolor 221 minimum 1 maximum 0 step 0.001
+        code0 {o->visible_focus(0);}
+        class {psi::Fader}
+      }
+      Fl_Value_Slider eq_low {
+        label Low
+        callback {writePort( V_LOW, o->value());}
+        xywh {635 450 20 140} type {Vert Knob} box NO_BOX labelsize 10 labelcolor 221 minimum 6 maximum -70 value -20
+        code0 {o->visible_focus(0);}
+        class {psi::Fader}
+      }
+      Fl_Value_Slider eq_mid {
+        label Mid
+        callback {writePort( V_MID, o->value());}
+        xywh {665 450 20 140} type {Vert Knob} box NO_BOX labelsize 10 labelcolor 221 minimum 6 maximum -70 value -20
+        code0 {o->visible_focus(0);}
+        class {psi::Fader}
+      }
+      Fl_Value_Slider eq_high {
+        label High
+        callback {writePort( V_HGH, o->value());}
+        xywh {695 450 20 140} type {Vert Knob} box NO_BOX labelsize 10 labelcolor 221 minimum 6 maximum -70 value -20
+        code0 {o->visible_focus(0);}
+        class {psi::Fader}
+      }
+      Fl_Box {} {
+        label OSC1
+        xywh {570 429 30 18} labelsize 10 labelcolor 221
+      }
+      Fl_Box {} {
+        label F3
+        xywh {600 429 30 18} labelsize 10 labelcolor 221
+      }
+      Fl_Dial filter1_type {
+        label Filter
+        callback {writePort( V_FL1_TYP,o->value());}
+        tooltip {Filter 1 type (OSC1):
+    LP12 / BP12 / HP12 - State variable filters
+    LP24 - Moog 4 pole filter
+    HP6 / BP6 - Moog 1 pole} xywh {15 230 40 60} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 8 step 1
+        code0 {o->display_values_set(filter_types, 9);o->draw_val_box = 1;}
+        class psiDialX
+      }
+      Fl_Dial filter1_cutoff {
+        label Cutoff
+        callback {writePort( V_FL1_CUT, o->value() );}
+        tooltip {Filter 1 cutoff} xywh {65 240 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 20000 step 0.01 value 1500
+        class psiDialX
+      }
+      Fl_Dial filter1_resonance {
+        label Res
+        callback {writePort( V_FL1_RES,o->value());}
+        tooltip {Filter 1 resonance} xywh {200 240 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.1
+        class psiDialX
+      }
+      Fl_Dial filter1_keytrack {
+        label {Key Trk}
+        callback {writePort( V_FL1_TRK,o->value() );}
+        tooltip {Filter 1 key tracking amount} xywh {245 240 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.01
+        class psiDialX
+      }
+      Fl_Dial osc1_sub {
+        label Sub
+        callback {writePort( V_OS1_SUB,o->value() );}
+        tooltip {Sub oscillator volume} xywh {160 50 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.01
+        class psiDialX
+      }
+      Fl_Dial osc1_vol {
+        label Volume
+        callback {writePort( V_OS1_VOL,o->value() );}
+        tooltip {Oscillator 1 volume} xywh {115 50 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.01
+        class psiDialX
+      }
+      Fl_Dial osc1_tune {
+        label Tune
+        callback {writePort( V_OS1_TUNE,o->value() + osc1_fine->value() / 100.0);}
+        xywh {255 50 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum -24 maximum 24 step 1
+        class psiDialX
+      }
+      Fl_Dial osc1_fine {
+        label Fine
+        callback {writePort( V_OS1_TUNE,o->value() / 100.0 + osc1_tune->value());}
+        xywh {300 50 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum -100 maximum 100 step 1
+        class psiDialX
+      }
+      Fl_Group osc1_pitch_mod {
+        label { Mod }
+        callback {writePort(V_OS1_PIT_M1 + o->changed_index(), o->changed_value(), 0);} open
+        xywh {345 50 85 55} align 17
+        code0 {o->mod_menu(modulation_menu, 15);}
+        class psiDialX_Mod
+      } {}
+      Fl_Dial osc1_unison {
+        label Unison
+        callback {writePort( V_OS1_UNI,o->value());}
+        tooltip {Number of unison oscillators} xywh {440 51 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum 1 maximum 16 step 1 value 63
+        class psiDialX
+      }
+      Fl_Dial osc1_det {
+        label Detune
+        callback {writePort( V_OS1_UNI_DET,o->value());}
+        tooltip {Unison detune amount} xywh {485 51 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum 1 maximum 127 step 1 value 63
+        class psiDialX
+      }
+      Fl_Dial osc1_mix {
+        label Mix
+        callback {writePort( V_OS1_UNI_MIX,o->value());}
+        tooltip {Side oscillator volume relative to the center oscillator} xywh {530 51 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum 1 maximum 127 step 1 value 63
+        class psiDialX
+      }
+      Fl_Dial osc2_wave {
+        label Shape
+        callback {writePort( V_OS2_SHP,o->value());}
+        tooltip {Oscillator 2 wave shape} xywh {20 135 40 60} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 6 step 1
+        code0 {const char *a[7];
+                a[0] = "Sine";
+                a[1] = "Triangle";
+                a[2] = "Saw";
+                a[3] = "Rev Saw";
+                a[4] = "Square";
+                a[5] = "Stair";
+                a[6] = "Pulse";
+                o->display_values_set(a, 7);o->draw_val_box = 1;}
+        class psiDialX
+      }
+      Fl_Dial osc2_unison {
+        label Unison
+        callback {writePort( V_OS2_UNI,o->value());}
+        tooltip {Number of unison oscillators} xywh {440 145 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum 1 maximum 16 step 1 value 63
+        class psiDialX
+      }
+      Fl_Dial osc2_det {
+        label Detune
+        callback {writePort( V_OS2_UNI_DET,o->value());}
+        tooltip {Unison detune amount} xywh {485 145 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum 1 maximum 127 step 1 value 63
+        class psiDialX
+      }
+      Fl_Dial osc2_mix {
+        label Mix
+        callback {writePort( V_OS2_UNI_MIX,o->value());}
+        tooltip {Side oscillator volume relative to the center oscillator} xywh {530 145 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum 1 maximum 127 step 1 value 63
+        class psiDialX
+      }
+      Fl_Dial osc2_distortion {
+        label Dist
+        callback {writePort( V_OS2_DST,o->value() );}
+        tooltip {Oscillator 2 wave-shaping distortion ampunt} xywh {205 145 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.01
+        class psiDialX
+      }
+      Fl_Dial osc2_tune {
+        label Tune
+        callback {writePort( V_OS2_TUNE,o->value() + osc2_fine->value()  / 100.0);}
+        xywh {255 145 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum -24 maximum 24 step 1
+        class psiDialX
+      }
+      Fl_Dial osc2_fine {
+        label Fine
+        callback {writePort( V_OS2_TUNE,o->value()  / 100.0 + osc2_tune->value());}
+        xywh {300 145 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 minimum -100 maximum 100 step 1
+        class psiDialX
+      }
+      Fl_Group osc2_pitch_mod {
+        label { Mod }
+        callback {writePort(V_OS2_PIT_M1 + o->changed_index(), o->changed_value(), 0);} open
+        xywh {345 145 85 55} align 17
+        code0 {o->mod_menu(modulation_menu, 15);}
+        class psiDialX_Mod
+      } {}
+      Fl_Dial filter2_type {
+        label Filter
+        callback {writePort( V_FL2_TYP,o->value());}
+        tooltip {Filter 2 type} xywh {305 229 40 60} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 8 step 1
+        code0 {o->display_values_set(filter_types, 9);o->draw_val_box = 1;}
+        class psiDialX
+      }
+      Fl_Dial filter2_cutoff {
+        label Cutoff
+        callback {writePort( V_FL2_CUT, o->value() );}
+        tooltip {Filter 2 cutoff} xywh {355 240 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 20000
+        class psiDialX
+      }
+      Fl_Dial filter2_resonance {
+        label Res
+        callback {writePort( V_FL2_RES,o->value());}
+        tooltip {Filter 2 resonance} xywh {490 240 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.1
+        class psiDialX
+      }
+      Fl_Dial filter2_keytrack {
+        label {Key Trk}
+        callback {writePort( V_FL2_TRK,o->value() );}
+        tooltip {Filter 2 key tracking amount} xywh {535 240 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.01
+        class psiDialX
+      }
+      Fl_Dial osc2_noise {
+        label Noise
+        callback {writePort( V_OS2_NSE,o->value() );}
+        tooltip {Noise volume} xywh {160 145 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.01
+        class psiDialX
+      }
+      Fl_Dial osc2_vol {
+        label Volume
+        callback {writePort( V_OS2_VOL,o->value() );}
+        tooltip {Oscillator 2 volume} xywh {115 145 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.01
+        class psiDialX
+      }
+      Fl_Dial filter3_type {
+        label Filter
+        callback {writePort( V_FL3_TYP,o->value());}
+        tooltip {Filter 3 type} xywh {20 440 40 60} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 8 step 1
+        code0 {o->display_values_set(filter_types, 9);o->draw_val_box = 1;}
+        class psiDialX
+      }
+      Fl_Dial filter3_cutoff {
+        label Cutoff
+        callback {writePort( V_FL3_CUT, o->value() );}
+        tooltip {Filter 3 cutoff} xywh {70 450 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 20000 step 1
+        class psiDialX
+      }
+      Fl_Button filt3_button {
+        label {OSC1+2}
+        callback {const Fl_Menu_Item *m = finput_menu->popup(205,445, 0, 0, 0);
+    if ( !m ) {
+        return;
+    } cb_menu(finput_menu, m, o, V_FL3_IN);
+    
+    
+        
+    return;}
+        tooltip {Select Filter 3 input} xywh {205 435 45 15} down_box BORDER_BOX labelsize 9
+        code0 {o->visible_focus(0);}
+      }
+      Fl_Dial filter3_resonance {
+        label Res
+        callback {writePort( V_FL3_RES,o->value());}
+        tooltip {Filter 3 resonance} xywh {205 450 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.1
+        class psiDialX
+      }
+      Fl_Dial filter4_resonance {
+        label Res
+        callback {writePort( V_FL4_RES,o->value());}
+        tooltip {Filter 4 resonance} xywh {205 545 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.1
+        class psiDialX
+      }
+      Fl_Button filt4_button {
+        label FILT1
+        callback {const Fl_Menu_Item *m = finput2_menu->popup(205,540, 0, 0, 0);
+    if ( !m ) {
+        return;
+    } cb_menu(finput2_menu, m, o, V_FL4_IN);
+    
+    
+        
+    return;}
+        tooltip {Select Filter 4 input} xywh {205 530 45 15} down_box BORDER_BOX labelsize 9
+        code0 {o->visible_focus(0);}
+      }
+      Fl_Dial filter4_type {
+        label Filter
+        callback {writePort( V_FL4_TYP,o->value());}
+        tooltip {Filter 4 type} xywh {20 535 40 60} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 8 step 1
+        code0 {o->display_values_set(filter_types, 9);o->draw_val_box = 1;}
+        class psiDialX
+      }
+      Fl_Dial filter4_cutoff {
+        label Cutoff
+        callback {writePort( V_FL4_CUT, o->value() );}
+        tooltip {Filter 4 cutoff} xywh {70 545 40 40} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 20000
+        class psiDialX
+      }
+      Fl_Button midi_learn {
+        label {MIDI Learn}
+        callback {if (midi_learn_on == 1) {
+                o->color(49);
+                midi_learn_on = 0;
+                writePort( V_MID_ON,0.0);
+            } else {
+                o->color(FL_RED);
+                writePort( V_MID_ON,1.0);
+                midi_learn_on = 1;
+            }}
+        tooltip {Activate / deactivate MIDI learn. To map a control, turn on MIDI learn and change the value of the control you would like to map. Te next MIDI CC control to be changed will then be mapped to that control.} xywh {635 5 70 20} down_box BORDER_BOX labelsize 10
+        code0 {o->visible_focus(0);midi_learn_on = 0;}
+      }
+      Fl_Box {} {
+        label { }
+        xywh {265 593 210 22} color 40 selection_color 32 labelcolor 51
+        code0 {o->label_align( 0, 0, LBL_LEFT,5, 10, BOX_ROUND);}
+        code1 {o->radius=3;}
+        class psiLabelBox
+      }
+      Fl_Button osc1_unison_type {
+        label Roland
+        callback {const Fl_Menu_Item *m = detune_menu->popup(290,20, 0, 0, 0);
+              if ( !m ) { return; }
+              else cb_menu(detune_menu, m, o , V_UNI_TYP);}
+        tooltip {Select unison method:
+	Roland - Roland JP8000 unison emulation
+	Exponential - side oscillator detune is calculated exponentially from the center} xywh {290 5 65 20} down_box BORDER_BOX labelsize 10
+        code0 {o->visible_focus(0);}
+      }
+      Fl_Box {} {
+        label Unison
+        xywh {225 7 60 13} labelsize 9 labelcolor 55
+      }
+      Fl_Box {} {
+        label {MIDI Channel}
+        xywh {475 7 60 13} labelsize 9 labelcolor 55
+      }
+      Fl_Box {} {
+        label {Key Split}
+        xywh {365 7 50 13} labelsize 9 labelcolor 55
+      }
+      Fl_Button midi_channel {
+        label All
+        callback {const Fl_Menu_Item *m = channel_menu->popup(545,20, 0, 0, 0);
+if ( !m ) { return; }
+else {
+    cb_menu(channel_menu, m, o , V_MID_CHN);
+}}
+        xywh {545 5 40 20} down_box BORDER_BOX labelsize 10
+        code0 {o->visible_focus(0);}
+      }
+      Fl_Button key_split {
+        label Off
+        callback {const Fl_Menu_Item *m = on_off_menu->popup(420,20, 0, 0, 0);
+if ( !m ) { return; }
+else cb_menu(on_off_menu, m, o , V_MID_KBD_SPT);}
+        tooltip {Incoming notes are split on C-4 between oscillator 1 and osciallator 2} xywh {420 5 40 20} down_box BORDER_BOX labelsize 10
+        code0 {o->visible_focus(0);}
+      }
+      Fl_Button btn_midi_mappings {
+        label Mappings
+        callback {midi_mapping_window->populate(midi_map, V_MIDI_MAPS);
+midi_mapping_window->ui = this;
+midi_mapping_window->position(o->parent()->x()+o->parent()->w()/2-midi_mapping_window->w()/2,o->parent()->y()+o->parent()->h()/2-midi_mapping_window->h()/2);
+midi_mapping_window->activate();midi_mapping_window->show();}
+        tooltip {View/delete current MIDI mappings.} xywh {710 5 70 20} down_box BORDER_BOX labelsize 10
+        code0 {o->visible_focus(0);}
+      }
+      Fl_Group osc2_phase {
+        label Phase
+        callback {writePort(V_OS2_WID_MOD + o->changed_index(), o->changed_value(), 0);} open
+        xywh {70 145 45 65} align 17
+        code0 {o->mod_menu(modulation_menu, 15);}
+        code3 {o->single();}
+        class psiDialX_Mod
+      } {}
+      Fl_Group osc1_phase {
+        label Phase
+        callback {writePort(V_OS1_WID_MOD + o->changed_index(), o->changed_value(), 0);} open
+        xywh {70 50 45 65} align 17
+        code0 {o->mod_menu(modulation_menu, 15);}
+        code3 {o->single();}
+        class psiDialX_Mod
+      } {}
+      Fl_Output led_display {
+        xywh {270 597 140 15} box FLAT_BOX color 40 labelfont 13 labelsize 10 labelcolor 32 textsize 10 textcolor 180
+        code0 {o->value("");o->visible_focus(0);}
+      }
+      Fl_Box led_display2 {
+        xywh {410 597 60 15} box FLAT_BOX color 32 labelfont 13 labelsize 10 labelcolor 180 align 8
+        code0 {o->align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE);}
+      }
+      Fl_Button panic {
+        label Panic
+        callback {writePort( V_NOT_OFF,1.0);}
+        tooltip {Send all notes/sounds off} xywh {485 595 65 20} down_box BORDER_BOX labelsize 10
+        code0 {o->visible_focus(0);midi_learn_on = 0;}
+      }
+      Fl_Value_Input tempo {
+        label BPM
+        callback {writePort( V_TMP, (float) o->value());}
+        xywh {180 7 35 18} labelsize 10 labelcolor 221 maximum 360 step 1 value 120 textsize 10
+        class Fl_Value_Input
+      }
+      Fl_Box {} {
+        label { }
+        xywh {725 437 40 172} color 50 labelcolor 51
+        code0 {o->label_align( 0, 0, LBL_LEFT,5, 10, BOX_ROUND);}
+        code1 {o->radius=0.5;}
+        class psiLabelBox
+      }
+      Fl_Dial delay_timer {
+        label {Delay R}
+        callback {
+bool sync = (strcmp(delay_sync->label(), "Off")!=0);
+bool lock = (delay_lock->color() == FL_GRAY);
+
+if (lock)
+{
+   delay_timel->value(o->value());
+   writePort( V_DLY_TML, delay_timer->value(), sync); 
+}
+writePort( V_DLY_TMR, o->value(), sync);    
+}
+        xywh {495 453 40 42} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 step 0.01
+        class psiDialX
+      }
+      Fl_Value_Slider volume {
+        label Master
+        callback {writePort( V_VOLUME, o->value());}
+        xywh {735 450 20 140} type {Vert Knob} box NO_BOX labelsize 10 labelcolor 221 minimum 100 maximum 0 value 50
+        code0 {o->visible_focus(0);}
+        class {psi::Fader}
+      }
+      Fl_Button delay_split {
+        label Off
+        callback {
+if (strcmp(delay_split->label(), "Off") == 0)
+{
+    writePort( V_DLY_SPT, 1.0, 0);
+    delay_split->label("On");
+} else {
+   writePort( V_DLY_SPT, 0.0, 0);
+   delay_split->label("Off"); 
+}            
+        }
+        tooltip {Sync delay to BPM} xywh {510 435 40 15} down_box BORDER_BOX labelsize 10
+        code0 {o->visible_focus(0);}
+      }
+      Fl_Box {} {
+        label Split
+        xywh {480 437 30 13} labelsize 9 labelcolor 221
+      }
+      Fl_Group lfo1 {
+        label LFO1
+        callback {if (o->port_index()==0) 
+        writePort(V_LF1_FRQ, o->value(), lfo1->synced() );
+    else 
+        writePort(V_LF1_FRQ + o->port_index(), o->value(), 0);} open
+        xywh {5 315 190 90} box DOWN_BOX align 17
+        class psiLFO
+      } {}
+      Fl_Group lfo2 {
+        label LFO2
+        callback {if (o->port_index()==0) 
+        writePort(V_LF2_FRQ, o->value(), lfo2->synced() );
+    else 
+        writePort(V_LF2_FRQ + o->port_index(), o->value(), 0);} open
+        xywh {200 315 190 90} box DOWN_BOX align 17
+        class psiLFO
+      } {}
+      Fl_Group lfo3 {
+        label LFO3
+        callback {if (o->port_index()==0) 
+        writePort(V_LF3_FRQ, o->value(), lfo3->synced() );
+    else 
+        writePort(V_LF3_FRQ + o->port_index(), o->value(), 0);} open
+        xywh {395 315 190 90} box DOWN_BOX align 17
+        class psiLFO
+      } {}
+      Fl_Group env1 {
+        label {AMP ENV1}
+        callback {writePort(V_EN1_ATT + o->port_index(), o->value(), 0);} open
+        xywh {590 30 190 90} box DOWN_BOX labelcolor 221 align 17
+        class psiENV
+      } {}
+      Fl_Group env2 {
+        label {AMP ENV2}
+        callback {writePort(V_EN2_ATT + o->port_index(), o->value(), 0);} open
+        xywh {590 125 190 90} box DOWN_BOX labelcolor 60 align 17
+        class psiENV
+      } {}
+      Fl_Group env3 {
+        label ENV3
+        callback {writePort(V_EN3_ATT + o->port_index(), o->value(), 0);} open
+        xywh {590 220 190 90} box DOWN_BOX labelcolor 52 align 17
+        class psiENV
+      } {}
+      Fl_Group env4 {
+        label ENV4
+        callback {writePort(V_EN4_ATT + o->port_index(), o->value(), 0);} open
+        xywh {590 315 190 90} box DOWN_BOX labelcolor 52 align 17
+        class psiENV
+      } {}
+      Fl_Group filt1_cutoff_mod {
+        label { Mod }
+        callback {writePort(V_FL1_M1 + o->changed_index(), o->changed_value(), 0);} open
+        xywh {110 240 85 55} align 17
+        code0 {o->mod_menu(modulation_menu, 15);}
+        code1 {o->maximum(100);}
+        class psiDialX_Mod
+      } {}
+      Fl_Group filt2_cutoff_mod {
+        label { Mod }
+        callback {writePort(V_FL2_M1 + o->changed_index(), o->changed_value(), 0);} open
+        xywh {400 240 85 55} align 17
+        code0 {o->mod_menu(modulation_menu, 15);}
+        code1 {o->maximum(100);}
+        class psiDialX_Mod
+      } {}
+      Fl_Group filt3_cutoff_mod {
+        label { Mod }
+        callback {writePort(V_FL3_M1 + o->changed_index(), o->changed_value(), 0);} open
+        xywh {115 450 85 55} align 17
+        code0 {o->mod_menu(modulation_menu, 15);}
+        code1 {o->maximum(100);}
+        class psiDialX_Mod
+      } {}
+      Fl_Group filt4_cutoff_mod {
+        label Mod
+        callback {writePort(V_FL4_M1 + o->changed_index(), o->changed_value(), 0);} open
+        xywh {115 545 85 55} align 17
+        code0 {o->mod_menu(modulation_menu, 15);}
+        code1 {o->maximum(100);}
+        class psiDialX_Mod
+      } {}
+      Fl_Group pan {
+        label Panning
+        callback {writePort(V_PAN_M1 + o->changed_index(), o->changed_value(), 0);} open
+        xywh {405 525 45 65} align 17
+        code0 {o->mod_menu(modulation_menu, 15);}
+        code1 {o->maximum(50);}
+        code2 {o->minimum(-50);}
+        code3 {o->single();}
+        class psiDialX_Mod
+      } {}
+      Fl_Button delay_lock {
+        label { = }
+        callback {if (o->color() == FL_GRAY) o->color(FL_BLACK);
+else 
+{
+    o->color(FL_GRAY);
+    delay_timer->value(delay_timel->value());
+    delay_timer->do_callback();
+}
+o->redraw();}
+        tooltip {Sync delay to BPM} xywh {470 464 16 16} box BORDER_BOX labelsize 9 labelcolor 54
+        code0 {o->color(FL_GRAY);o->visible_focus(0);}
+      }
+      Fl_Dial feedback_r {
+        label {Amount R}
+        callback {
+const bool lock = (delay_fblock->color() == FL_GRAY);
+const bool sync = ( strcmp(delay_sync->label(), "On") == 0);
+if (lock)
+{
+   feedback_l->value(o->value());
+   writePort( V_DLY_FBL, feedback_l->value(),sync); 
+}
+writePort( V_DLY_FBR, o->value(), sync);
+        }
+        xywh {350 452 40 43} box ROUNDED_BOX color 72 labelsize 10 labelcolor 221 maximum 100 step 0.01
+        class psiDialX
+      }
+      Fl_Button delay_fblock {
+        label { = }
+        callback {if (o->color() == FL_GRAY) o->color(FL_BLACK);
+else 
+{
+    o->color(FL_GRAY);
+    feedback_r->value(feedback_l->value());
+    feedback_r->do_callback();
+}
+o->redraw();} selected
+        tooltip {Sync delay to BPM} xywh {324 464 16 16} box BORDER_BOX labelsize 9 labelcolor 54
+        code0 {o->color(FL_GRAY);o->visible_focus(0);}
+      }
+    }
+    Fl_Window midi_mapping_window {
+      label {MIDI Mappings}
+      callback {float port = V_MID_L01;          
+for (int idx = 0; idx < V_MIDI_MAPS; idx++)
+{
+    
+    midi_map[idx] = (float)((o->data[idx].channel << 16) | (o->data[idx].cc << 8) | (o->data[idx].port)) ;
+    
+    writePort(port++, (float)midi_map[idx]);
+    
+}
+o->hide();
+window->redraw();} open
+      xywh {811 142 460 400} type Double hide
+      class psiMidiMapping modal size_range {460 400 460 400}
+    } {}
+  }
+  decl {Fl_Menu_Item modulation_menu[16] = {
+        { "OFF" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { "LFO1" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "LFO2" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "LFO3" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "ENV1" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "ENV2" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "ENV3" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "ENV4" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "IENV3" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { "IENV4" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "XLFO1" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "XLFO2" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "XLFO3" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { "XENV3" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { "XENV4" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
+        { 0 }
+    };} {public local
+  }
+  decl {const char *wave_menu[9] = {
+      { "Sine" },
+      { "Tri" },
+      { "Saw" },
+      { "Rev Saw" },
+      { "Sqr" },
+      { "Stair" },
+      { "Pulse" },
+      { 0 } };} {public local
+  }
+  decl {const char *filter_types[10] = {
+      { "Bypass" },
+      { "LP12" },
+      { "HP12" },
+      { "BP12" },
+      { "LP24" },
+      { "HP24" },
+      { "BP24" },
+      { "HP6" },
+      { "BP6" },
+      { 0 } };} {public local
+  }
+  decl {Fl_Menu_Item env_menu[3] = {
+      { "Poly" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "Loop" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { 0 } };} {public local
+  }
+  decl {Fl_Menu_Item detune_menu[3] = {
+      { "Roland" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "Exponential" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { 0 } };} {public local
+  }
+  decl {Fl_Menu_Item on_off_menu[3] = {
+      { "Off" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "On" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { 0 } };} {public local
+  }
+  decl {Fl_Menu_Item finput_menu[5] = {
+        { "Bypass" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { "OSC1+2",0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { "OSC1",0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { "OSC2",0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { 0 }};} {public local
+  }
+  decl {Fl_Menu_Item finput2_menu[6] = {
+        { "Bypass" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { "OSC1+2",0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { "OSC1",0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { "OSC2",0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { "FILT1",0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+        { 0 }};} {public local
+  }
+  decl {Fl_Menu_Item channel_menu[18] = {
+      { "All" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "1" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "2" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "3" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "4" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "5" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "6" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "7" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "8" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "9" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "10" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "11" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "12" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "13" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "14" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "15" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { "16" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
+      { 0 } };} {public local
+  }
+  decl {int midi_learn_on = 0;} {public local
+  }
+  decl {float osc1_mod1_amt = 0.0;} {public local
+  }
+  decl {float osc1_mod2_amt = 0.0;} {public local
+  }
+  decl {float osc1_mod3_amt = 0.0;} {public local
+  }
+  decl {float osc2_mod1_amt = 0.0;} {public local
+  }
+  decl {float osc2_mod2_amt = 0.0;} {public local
+  }
+  decl {float osc2_mod3_amt = 0.0;} {public local
+  }
+  decl {float filt1_mod1_amt = 0.0;} {public local
+  }
+  decl {float filt1_mod2_amt = 0.0;} {public local
+  }
+  decl {float filt1_mod3_amt = 0.0;} {public local
+  }
+  decl {float filt2_mod1_amt = 0.0;} {public local
+  }
+  decl {float filt2_mod2_amt = 0.0;} {public local
+  }
+  decl {float filt2_mod3_amt = 0.0;} {public local
+  }
+  decl {float filt3_mod1_amt = 0.0;} {public local
+  }
+  decl {float filt3_mod2_amt = 0.0;} {public local
+  }
+  decl {float filt3_mod3_amt = 0.0;} {public local
+  }
+  decl {float filt4_mod1_amt = 0.0;} {public local
+  }
+  decl {float filt4_mod2_amt = 0.0;} {public local
+  }
+  decl {float filt4_mod3_amt = 0.0;} {public local
+  }
+  decl {float midi_map[V_MIDI_MAPS];} {public local
+  }
+  Function {cb_menu(const Fl_Menu_Item* items, const Fl_Menu_Item* m, Fl_Button* button, int port)} {open return_type void
+  } {
+    code {if ( !m ) {
+          return;
+  } 
+  const int vals = parameters[port].max + 1;
+  for (int i=0; i < vals; ++i) {
+      if ( strcmp(items[i].label(), m->label()) == 0 ) {
+       writePort(port,(float) i);
+         button->label(m->label());    
+         return;
+      }
+  }
+  return;} {}
+  }
+  decl {LV2UI_Write_Function write_function;} {public local
+  }
+  decl {LV2UI_Controller controller;} {public local
+  }
+ 
+  Function {writePort(const int port, const double value, const int sync = 0)} {open
+  } {
+    code {float last_port = port;
+    int v_port = port;
+    const float sval = voice_param_value(port, value, sync) /
+                        parameters[port].scale;
+    char s[128];
+    char t[128];
+    if ( midi_learn_on == 0) {
+        
+        write_function(controller, port, sizeof(float), 0, &sval);
+        write_function(controller,V_LAST_PORT, sizeof(float), 0, &last_port);
+        if (parameters[v_port].can_display!=0) {
+            
+            voice_param_display(v_port, sval, (char*) s, (char*) t, sync);
+            led_display->value(t);
+            led_display2->copy_label(s);
+        } else {
+            led_display->value("");
+            led_display2->copy_label("");
+        }
+        led_display->redraw();
+        led_display2->redraw();
+    } else {
+        write_function(controller, port, sizeof(float), 0, &sval);
+        write_function(controller,V_LAST_PORT, sizeof(float), 0, &last_port);
+        
+   }} {}
+  }
+  Function {idle()} {open return_type void
+  } {
+    code {Fl::check();
+Fl::flush();} {}
+  }
+  Function {getWidth()} {open return_type int
+  } {
+    code {return window->w();} {}
+  }
+  Function {getHeight()} {open return_type int
+  } {
+    code {return window->h();} {}
+  }
+} 
+
+decl {\#include <FL/Fl_Slider.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Button.H>} {public global
+} 

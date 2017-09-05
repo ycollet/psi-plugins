@@ -1,0 +1,2143 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix midi: <http://lv2plug.in/ns/ext/midi#> .
+@prefix urid: <http://lv2plug.in/ns/ext/urid#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix epp:  <http://lv2plug.in/ns/dev/extportinfo#> .
+@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
+@prefix time: <http://lv2plug.in/ns/ext/time#> .
+@prefix rsz:  <http://lv2plug.in/ns/ext/resize-port#> .
+<http://bjones.it/who/bsjones>
+   a foaf:Person ;
+   foaf:name "Brendan Jones" ;
+   foaf:mbox <mailto:brendan.jones.it@gmail.com> ;
+   foaf:homepage <http://bjones.it/> .
+  
+<http://bjones.it/psi-plugins/super_welle/ui>
+  a ui:X11UI ;
+  lv2:requiredFeature urid:map ;
+  lv2:optionalFeature ui:noUserResize ;
+  ui:portNotification [
+    ui:plugin <http://bjones.it/psi-plugins/super_welle> ;
+    lv2:symbol "notify" ;
+    ui:notifyType atom:Blank
+  ] .
+<http://bjones.it/psi-plugins/super_welle>
+   a lv2:Plugin, lv2:GatePlugin;
+   doap:name "Super Welle" ;
+   doap:maintainer <http://bjones.it/who/bsjones> ;
+   doap:license <http://usefulinc.com/doap/licenses/gpl> ;
+   lv2:requiredFeature urid:map ;
+   lv2:optionalFeature lv2:hardRTCapable ;
+   
+   ui:ui <http://bjones.it/psi-plugins/super_welle/ui>;
+   
+   lv2:port [
+    a lv2:InputPort, atom:AtomPort ;
+    atom:bufferType atom:Sequence ;
+    atom:supports midi:MidiEvent ;
+    lv2:index 0;
+    lv2:symbol "midi_in" ;
+    lv2:name "in" ;
+     lv2:documentation """
+<p>MIDI Input</p>
+""" ;
+   ] ;
+   
+   lv2:port [
+     a lv2:InputPort, lv2:AudioPort ;
+     lv2:index 1;
+     lv2:symbol "left_in" ;
+     lv2:name "in_left" ;
+     lv2:documentation """
+<p>Left channel in (unused)</p>
+""" ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:AudioPort ;
+     lv2:index 2;
+     lv2:symbol "right_in" ;
+     lv2:name "in_right" ;
+     lv2:documentation """
+<p>Right channel in (unused)</p>
+""" ;
+   ] ;
+  
+   lv2:port [
+     a lv2:OutputPort, lv2:AudioPort ;
+     lv2:index 3;
+     lv2:symbol "left_out" ;
+     lv2:name "out_left" ;
+     lv2:documentation """
+<p>Left channel out</p>
+""" ;
+   ] ;
+  
+   lv2:port [
+     a lv2:OutputPort, lv2:AudioPort ;
+     lv2:index 4;
+     lv2:symbol "right_out" ;
+     lv2:name "out_right" ;
+     lv2:documentation """
+<p>Right channel out</p>
+""" ;
+   ] ;
+   lv2:port [
+     a atom:AtomPort , lv2:OutputPort ;
+     lv2:designation lv2:control ;
+     atom:bufferType atom:Sequence ;
+     lv2:index 5;
+     lv2:symbol "notify" ;
+     lv2:name "Notify" ;
+     # ?? midi notes per frame 1 int 1 float + blank
+     rsz:minimumSize 2048;
+     lv2:documentation """
+<p>Control port for communicationg with the plugin UI</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, atom:AtomPort ;
+     atom:bufferType atom:Sequence ;
+     atom:supports time:Position ;
+     lv2:index 6;
+     lv2:symbol "control" ;
+     lv2:name "Control" ;
+     lv2:documentation """
+<p>This port is used for host to plugin communication (for hosts that support jack transport via Atom)</p>
+""" ;
+  ] ;
+  lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Global volume" ;
+     lv2:index 7;
+     lv2:symbol "amplitude" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1 ;
+     lv2:default 0.5 ;
+     lv2:documentation """
+<p>Master volume</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Key level (dB)" ;
+     lv2:index 8;
+     lv2:symbol "level" ;
+     lv2:minimum -70.0 ;
+     lv2:maximum 6.0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter Mix" ;
+     lv2:index 9;
+     lv2:symbol "filter_mix" ;
+     lv2:default 1.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>Adjusts the balance between filter 3 and filter 4 outputs.</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC Mix" ;
+     lv2:index 10;
+     lv2:symbol "osc_mix" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 1.0 ;
+     lv2:documentation """
+<p>Adjust the balance between OSC1 and OSC2 when they are used together as input for global filters 3 or 4</p>
+""" ;
+    ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 11;
+     lv2:symbol "osc_unison_type" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "Unison Type" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:scalePoint [ rdfs:label "Roland" ; rdf:value 0.0 ] ;    
+     lv2:scalePoint [ rdfs:label "Exponential" ; rdf:value 1.0 ] ;
+     lv2:documentation """
+<p>The algorithm used for calculating unison spread. Roland = Roland JP8000, Exponential = exponential spread form center frequency</p>
+""" ;
+    ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Delay Feedback Left" ;
+     lv2:index 12;
+     lv2:symbol "delay_fbl" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Amount the delayed signal is fed back</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Delay Feedback Right" ;
+     lv2:index 13;
+     lv2:symbol "delay_fbr" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Amount the delayed signal is fed back</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Delay Time Left (s)" ;
+     lv2:index 14;
+     lv2:symbol "delay_timel" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Left channel or (delay sync) Oscillator 1 delay time</p>
+""" ;
+   ] ;
+  lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Delay Time Right (s)" ;
+     lv2:index 15;
+     lv2:symbol "delay_timer" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Right channel or (delay sync) Oscillator 2 delay time</p>
+""" ;
+   ] ;   
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Delay Sync" ;
+     lv2:index 16;
+     lv2:symbol "delay_sync" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>When turned on Oscillator 1 will be delayed by Delay Time Left, Oscillator 2 by Delay Time right</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Delay Split" ;
+     lv2:index 17;
+     lv2:symbol "delay_split" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Separate oscillator delay lines according to keyboard split, otherwise the . OSC1 = left, OSC2 = right</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Glide (s)" ;
+     lv2:index 18;
+     lv2:symbol "glide" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Glide time between the current note and the last note</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Polyphony" ;
+     lv2:index 19;
+     lv2:symbol "polyphony" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 16.0 ;
+     lv2:default 16.0 ;
+     lv2:documentation """
+<p>The number of concurrent voices</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Panning Mod" ;
+     lv2:index 20;
+     lv2:symbol "panning_mod" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p>Stereo panning modulator</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Panning" ;
+     lv2:index 21;
+     lv2:symbol "panning" ;
+     lv2:minimum -0.5 ;
+     lv2:maximum 0.5 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Stereo panning</p>
+""" ;
+   ];
+   
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Low" ;
+     lv2:index 22;
+     lv2:symbol "eq_low" ;
+     lv2:minimum -70 ;
+     lv2:maximum 6 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p>EQ Low amount </p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Mid" ;
+     lv2:index 23;
+     lv2:symbol "eq_mid" ;
+     lv2:minimum -70 ;
+     lv2:maximum 6 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p>EQ Mid amount </p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "High" ;
+     lv2:index 24;
+     lv2:symbol "eq_high" ;
+     lv2:minimum -70 ;
+     lv2:maximum 6 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p>EQ High amount</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 25;
+     lv2:symbol "tempo" ;
+     lv2:designation time:beatsPerMinute;
+     lv2:name "Tempo" ;
+     lv2:default 120.0 ;
+     lv2:minimum 1 ;
+     lv2:maximum 360.0 ;
+     lv2:documentation """
+<p>Beats per minute</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 26;
+     lv2:symbol "osc1_wave" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "OSC1 Wave" ;
+     lv2:default 2.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 7.0 ;
+     lv2:scalePoint [ rdfs:label "Sine" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Triangle" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "Saw" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "RevSaw" ; rdf:value 3.0 ] ;
+     lv2:scalePoint [ rdfs:label "Square" ; rdf:value 4.0 ] ;
+     lv2:scalePoint [ rdfs:label "Random" ; rdf:value 5.0 ] ;    
+     lv2:scalePoint [ rdfs:label "Stair" ; rdf:value 6.0 ] ;
+     lv2:documentation """
+<p>Oscillator 1 wave shape</p>
+""" ;
+    ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC1 Pulse Width Mod" ;
+     lv2:index 27;
+     lv2:symbol "osc1_pulse_mod" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p>Oscillator 1 phase offset modulator</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC1 Pulse Width" ;
+     lv2:index 28;
+     lv2:symbol "osc1_width" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Oscillator 1 phase offset modulation</p>
+""" ;
+   ] ;
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 29;
+     lv2:symbol "osc1_vol" ;
+     lv2:name "OSC1 Volume" ;
+     lv2:default 0.5 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>Oscillator 1 phase offset modulator amount</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 30;
+     lv2:symbol "osc1_tune" ;
+     lv2:name "OSC1 Tune" ;
+     lv2:default 0.0 ;
+     lv2:minimum -24.0 ;
+     lv2:maximum 24.0 ;
+     lv2:documentation """
+<p>Oscillator 1 tuning</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 31;
+     lv2:symbol "osc1_sub" ;
+     lv2:name "OSC1 SOB OSC" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:scalePoint [ rdfs:label "Roland" ; rdf:value 0.0 ] ;    
+     lv2:scalePoint [ rdfs:label "Exponential" ; rdf:value 1.0 ] ;
+     lv2:documentation """
+<p>Sub-Oscillator 1 amount. This is an extra square oscillator 12 semitones lower than the base frequency</p>
+""" ;    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 32;
+     lv2:symbol "osc1_unison" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "OSC1 Unison" ;
+     lv2:default 7.0 ;
+     lv2:minimum 1.0 ;
+     lv2:maximum 16.0 ;
+     lv2:documentation """
+<p>The number of Oscillator 1 unison voices</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 33;
+     lv2:symbol "osc1_unison_spread" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "OSC1 Unison Detune" ;
+     lv2:default 20 ;
+     lv2:minimum 0 ;
+     lv2:maximum 127 ;
+     lv2:documentation """
+<p>Oscillator 1 unison detune/spread</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 34;
+     lv2:symbol "osc1_uni_mix" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "OSC1 Unison Mix" ;
+     lv2:default 63 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 127.0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 35;
+     lv2:symbol "osc1_distortion" ;
+     lv2:name "OSC1 High Pass Fundamental" ;
+     lv2:default 0.0 ;
+     lv2:minimum -1.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC1 Pitch Mod 1" ;
+     lv2:index 36;
+     lv2:symbol "osc1_pitchmod1" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC1 Pitch Mod 2" ;
+     lv2:index 37;
+     lv2:symbol "osc1_pitchmod2" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC1 Pitch Mod 3" ;
+     lv2:index 38;
+     lv2:symbol "osc1_pitchmod3" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];   
+lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC1 Pitch Mod Amt1" ;
+     lv2:index 39;
+     lv2:symbol "osc1_pitchmod1a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC1 Pitch Mod Amt2" ;
+     lv2:index 40;
+     lv2:symbol "osc1_pitchmod2a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC1 Pitch Mod Amt3" ;
+     lv2:index 41;
+     lv2:symbol "osc1_pitchmod3a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 42;
+     lv2:symbol "osc2_wave" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "OSC2 Wave" ;
+     lv2:default 4.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 7.0 ;
+     lv2:scalePoint [ rdfs:label "Sine" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Triangle" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "Saw" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "RevSaw" ; rdf:value 3.0 ] ;
+     lv2:scalePoint [ rdfs:label "Square" ; rdf:value 4.0 ] ;
+     lv2:scalePoint [ rdfs:label "Stair" ; rdf:value 5.0 ] ;
+     lv2:documentation """
+<p>Oscillator 2 wave shape</p>
+""" ;
+    ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC2 Pulse Width Mod" ;
+     lv2:index 43;
+     lv2:symbol "osc2_pulse_mod" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p>Oscillator 1 phase offset modulator</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC2 Pulse Width" ;
+     lv2:index 44;
+     lv2:symbol "osc2_width" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Oscillator 2 phase offset modulation</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 45;
+     lv2:symbol "osc2_volume" ;
+     lv2:name "OSC2 volume" ;
+     lv2:default 0.5 ;
+     lv2:minimum 0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>Oscillator 1 phase offset modulator amount</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 46;
+     lv2:symbol "osc2_tune" ;
+     lv2:name "OSC2 Tune" ;
+     lv2:default -12.0 ;
+     lv2:minimum -24.0 ;
+     lv2:maximum 24.0 ;
+     lv2:documentation """
+<p>Oscillator 2 tuning</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 47;
+     lv2:symbol "osc2_noise" ;
+     lv2:name "OSC2 Noise" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>Oscillator 2 noise volume</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 48;
+     lv2:symbol "osc2_unison" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "OSC2 Unison" ;
+     lv2:default 7.0 ;
+     lv2:minimum 1.0 ;
+     lv2:maximum 16.0 ;
+     lv2:documentation """
+<p>The number of Oscillator 1 unison voices</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 49;
+     lv2:symbol "osc2_unison_spread" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "OSC2 Unison Detune" ;
+     lv2:default 63 ;
+     lv2:minimum 0 ;
+     lv2:maximum 127 ;  
+     lv2:documentation """
+<p>Oscillator 2 unison/detune spread</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 50;
+     lv2:symbol "osc2_uni_mix" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "OSC2 Unison Mix" ;
+     lv2:default 63 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 127.0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 51;
+     lv2:symbol "osc2_distortion" ;
+     lv2:name "OSC2 Distortion" ;
+     lv2:default 0.00 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC2 Pitch Mod 1" ;
+     lv2:index 52;
+     lv2:symbol "osc2_pitchmod1" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC2 Pitch Mod 2" ;
+     lv2:index 53;
+     lv2:symbol "osc2_pitchmod2" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC2 Pitch Mod 3" ;
+     lv2:index 54;
+     lv2:symbol "osc2_pitchmod3" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC2 Pitch Mod Amt1" ;
+     lv2:index 55;
+     lv2:symbol "osc2_pitchmod1a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC2 Pitch Mod Amt2" ;
+     lv2:index 56;
+     lv2:symbol "osc2_pitchmod2a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "OSC2 Pitch Mod Amt3" ;
+     lv2:index 57;
+     lv2:symbol "osc2_pitchmod3a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 1 Cutoff" ;
+     lv2:index 58;
+     lv2:symbol "filt1_cutoff" ;
+     lv2:minimum 20 ;
+     lv2:maximum 20000 ;
+     lv2:default 6000 ;
+     lv2:documentation """
+<p>Filter 1 cutoff (20Hz - 2000Hz)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 1 Resonance" ;
+     lv2:index 59;
+     lv2:portProperty epp:logarithmic ;
+     lv2:symbol "filt1_resonance" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Filter 1 resonance</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 1 Width" ;
+     lv2:index 60;
+     lv2:symbol "filt1_width" ;
+     lv2:minimum 0.1 ;
+     lv2:maximum 4.0 ;
+     lv2:default 0.6 ;
+     lv2:documentation """
+<p>Unused</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 1 Type" ;
+     lv2:index 61;
+     lv2:symbol "filt1_type" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 4.0 ;
+     lv2:default 4.0 ;
+     lv2:scalePoint [ rdfs:label "None"  ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "LPF12" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "HPF12" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF12" ; rdf:value 3.0 ] ;
+     lv2:scalePoint [ rdfs:label "LPF24" ; rdf:value 4.0 ] ;
+     lv2:scalePoint [ rdfs:label "HPF24" ; rdf:value 5.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF24" ; rdf:value 6.0 ] ; 
+     lv2:scalePoint [ rdfs:label "HPF6"  ; rdf:value 7.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF6"  ; rdf:value 8.0 ] ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter1 Input" ;
+     lv2:index 62;
+     lv2:symbol "filt1_input" ;
+     lv2:portProperty lv2:integer ;
+     lv2:default 2.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 3.0 ;
+     lv2:scalePoint [ rdfs:label "None" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Mix" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "OSC1" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "OSC2" ; rdf:value 3.0 ] ;
+     lv2:documentation """
+<p></p>
+""" ;
+    ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 1 Retrigger" ;
+     lv2:index 63;
+     lv2:symbol "filt1_retrigger" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 1 Key Tracking" ;
+     lv2:index 64;
+     lv2:symbol "filt1_keytrack" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name  "Filter1 Cutoff Mod 1" ;
+     lv2:index 65;
+     lv2:symbol "filt1_cuttoffmod1" ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter1 Cutoff Mod 2" ;
+     lv2:index 66;
+     lv2:symbol "filt1_cuttoffmod2" ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter1 Cutoff Mod 3" ;
+     lv2:index 67;
+     lv2:symbol "filt1_cuttoffmod3" ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter1 Cutoff Mod Amt1" ;
+     lv2:index 68;
+     lv2:symbol "filt1_cuttoffmod1a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter1 Cutoff Mod Amt2" ;
+     lv2:index 69;
+     lv2:symbol "filt1_cuttoffmod2a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter1 Cutoff Mod Amt3" ;
+     lv2:index 70;
+     lv2:symbol "filt1_cuttoffmod3a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 2 Cutoff" ;
+     lv2:index 71;
+     lv2:portProperty lv2:integer ;
+     lv2:symbol "filt2_cutoff" ;
+     lv2:minimum 20 ;
+     lv2:maximum 60000 ;
+     lv2:default 1000 ;
+     lv2:documentation """
+<p>Filter 2 cutoff (20Hz - 2000Hz)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Resonance 2" ;
+     lv2:index 72;
+     lv2:portProperty epp:logarithmic ;
+     lv2:symbol "filt2_resonance" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 2 Width" ;
+     lv2:index 73;
+     lv2:symbol "filt2_width" ;
+     lv2:minimum 0.1 ;
+     lv2:maximum 4.0 ;
+     lv2:default 0.6 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter2 Type" ;
+     lv2:index 74;
+     lv2:symbol "filt2_type" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 4.0 ;
+     lv2:default 4.0 ;
+     lv2:scalePoint [ rdfs:label "None"  ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "LPF12" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "HPF12" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF12" ; rdf:value 3.0 ] ;
+     lv2:scalePoint [ rdfs:label "LPF24" ; rdf:value 4.0 ] ;
+     lv2:scalePoint [ rdfs:label "HPF24" ; rdf:value 5.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF24" ; rdf:value 6.0 ] ; 
+     lv2:scalePoint [ rdfs:label "HPF6"  ; rdf:value 7.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF6"  ; rdf:value 8.0 ] ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter2 Input" ;
+     lv2:index 75;
+     lv2:symbol "filt2_input" ;
+     lv2:portProperty lv2:integer ;
+     lv2:default 3.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 4.0 ;
+     lv2:scalePoint [ rdfs:label "None" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Mix" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "OSC1" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "OSC2" ; rdf:value 3.0 ] ;
+    ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 2 Retrigger" ;
+     lv2:index 76;
+     lv2:symbol "filt2_retrigger" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 2 Key Tracking" ;
+     lv2:index 77;
+     lv2:symbol "filt2_keytrack" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name  "Filter2 Cutoff Mod 1" ;
+     lv2:index 78;
+     lv2:symbol "filt2_cuttoffmod1" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter2 Cutoff Mod 2" ;
+     lv2:index 79;
+     lv2:symbol "filt2_cuttoffmod2" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter2 Cutoff Mod 3" ;
+     lv2:index 80;
+     lv2:symbol "filt2_cuttoffmod3" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter2 Cutoff Mod Amt1" ;
+     lv2:index 81;
+     lv2:symbol "filt2_cuttoffmod1a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter2 Cutoff Mod Amt2" ;
+     lv2:index 82;
+     lv2:symbol "filt2_cuttoffmod2a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter2 Cutoff Mod Amt3" ;
+     lv2:index 83;
+     lv2:symbol "filt2_cuttoffmod3a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 3 Cutoff" ;
+     lv2:index 84;
+     lv2:symbol "cutoff3" ;
+     lv2:minimum 20 ;
+     lv2:maximum 20000 ;
+     lv2:default 20000 ;
+     lv2:documentation """
+<p>Filter 3 cutoff (20Hz - 2000Hz)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 3 Resonance" ;
+     lv2:index 85;
+     lv2:portProperty epp:logarithmic ;
+     lv2:symbol "filt3_resonance" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 3 Width" ;
+     lv2:index 86;
+     lv2:symbol "filt3_width" ;
+     lv2:minimum 0.1 ;
+     lv2:maximum 4.0 ;
+     lv2:default 0.6 ;
+     
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 3 Type" ;
+     lv2:index 87;
+     lv2:symbol "filt3_type" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 4.0 ;
+     lv2:default 0.0 ;
+     lv2:scalePoint [ rdfs:label "None"  ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "LPF12" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "HPF12" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF12" ; rdf:value 3.0 ] ;
+     lv2:scalePoint [ rdfs:label "LPF24" ; rdf:value 4.0 ] ;
+     lv2:scalePoint [ rdfs:label "HPF24" ; rdf:value 5.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF24" ; rdf:value 6.0 ] ; 
+     lv2:scalePoint [ rdfs:label "HPF6"  ; rdf:value 7.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF6"  ; rdf:value 8.0 ] ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter3 Input" ;
+     lv2:index 88;
+     lv2:symbol "filt3_input" ;
+     lv2:portProperty lv2:integer ;
+     lv2:default 1.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 3.0 ;
+     lv2:scalePoint [ rdfs:label "None" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Mix" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "OSC1" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "OSC2" ; rdf:value 3.0 ] ;
+     lv2:documentation """
+<p></p>
+""" ;
+    ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 3 Retrigger" ;
+     lv2:index 89;
+     lv2:symbol "filt3_retrigger" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name  "Filter3 Cutoff Mod 1" ;
+     lv2:index 90;
+     lv2:symbol "filt3_cuttoffmod1" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter3 Cutoff Mod 2" ;
+     lv2:index 91;
+     lv2:symbol "filt3_cuttoffmod2" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter3 Cutoff Mod 3" ;
+     lv2:index 92;
+     lv2:symbol "filt3_cuttoffmod3" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter3 Cutoff Mod Amt1" ;
+     lv2:index 93;
+     lv2:symbol "filt3_cuttoffmod1a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 1 ;
+     lv2:documentation """
+<p>Amount modulator 1 affects filter 3 cutoff</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter3 Cutoff Mod Amt2" ;
+     lv2:index 94;
+     lv2:symbol "filt3_cuttoffmod2a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 1 ;
+     lv2:documentation """
+<p>Amount modulator 2 affects filter 3 cutoff</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter3 Cutoff Mod Amt3" ;
+     lv2:index 95;
+     lv2:symbol "filt3_cuttoffmod3a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 1 ;
+     lv2:documentation """
+<p>Amount modulator 3 affects filter 3 cutoff</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 4 Cutoff" ;
+     lv2:index 96;
+     lv2:symbol "filt4_cutoff" ;
+     lv2:minimum 20 ;
+     lv2:maximum 20000 ;
+     lv2:default 20000 ;
+     lv2:documentation """
+<p>Filter 4 cutoff (20Hz - 2000Hz)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 4 Resonance" ;
+     lv2:index 97;
+     lv2:portProperty epp:logarithmic ;
+     lv2:symbol "filt4_resonance" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 4 Width" ;
+     lv2:index 98;
+     lv2:symbol "filt4_width" ;
+     lv2:minimum 0.1 ;
+     lv2:maximum 4.0 ;
+     lv2:default 0.6 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter4 Type" ;
+     lv2:index 99;
+     lv2:symbol "filt4_type" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 4.0 ;
+     lv2:default 0.0 ;
+     lv2:scalePoint [ rdfs:label "None"  ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "LPF12" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "HPF12" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF12" ; rdf:value 3.0 ] ;
+     lv2:scalePoint [ rdfs:label "LPF24" ; rdf:value 4.0 ] ;
+     lv2:scalePoint [ rdfs:label "HPF24" ; rdf:value 5.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF24" ; rdf:value 6.0 ] ; 
+     lv2:scalePoint [ rdfs:label "HPF6"  ; rdf:value 7.0 ] ; 
+     lv2:scalePoint [ rdfs:label "BPF6"  ; rdf:value 8.0 ] ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter4 Input" ;
+     lv2:index 100;
+     lv2:symbol "filt4_input" ;
+     lv2:portProperty lv2:integer ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 4.0 ;
+     lv2:scalePoint [ rdfs:label "None" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Mix" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "OSC1" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "OSC2" ; rdf:value 3.0 ] ;
+     lv2:documentation """
+<p></p>
+""" ;
+    ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter 4 Retrigger" ;
+     lv2:index 101;
+     lv2:symbol "filt4_retrigger" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name  "Filter4 Cutoff Mod 1" ;
+     lv2:index 102;
+     lv2:symbol "filt4_cuttoffmod1" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter4 Cutoff Mod 2" ;
+     lv2:index 103;
+     lv2:symbol "filt4_cuttoffmod2" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter4 Cutoff Mod 3" ;
+     lv2:index 104;
+     lv2:symbol "filt4_cuttoffmod3" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0 ;
+     lv2:maximum 7 ;
+     lv2:default 0 ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter4 Cutoff Mod Amt1" ;
+     lv2:index 105;
+     lv2:symbol "filt4_cuttoffmod1a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 1 ;
+     lv2:documentation """
+<p>Amount modulator 1 affects filter 4 cutoff</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter4 Cutoff Mod Amt2" ;
+     lv2:index 106;
+     lv2:symbol "filt4_cuttoffmod2a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 1 ;
+     lv2:documentation """
+<p>Amount modulator 2 affects filter 4 cutoff</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Filter4 Cutoff Mod Amt3" ;
+     lv2:index 107;
+     lv2:symbol "filt4_cuttoffmod3a" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0.5 ;
+     lv2:documentation """
+<p>Amount modulator 3 affects filter 4 cutoff</p>
+""" ;
+   ];
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 108;
+     lv2:symbol "lfo1_freq" ;
+     lv2:name "LFO1 Rate" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 20.0 ;
+     lv2:documentation """
+<p>LFO 1 rate</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 109;
+     lv2:symbol "lfo1_amp" ;
+     lv2:name "LFO1 Amplitude" ;
+     lv2:default 0.5 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>LFO 1 depth</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 110;
+     lv2:symbol "lfo1_wave" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "LFO1 Wave" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 7.0 ;
+     lv2:default 0.0 ;
+     lv2:scalePoint [ rdfs:label "Sine" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Triangle" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "Saw" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "RevSaw" ; rdf:value 3.0 ] ;
+     lv2:scalePoint [ rdfs:label "Square" ; rdf:value 4.0 ] ;
+     lv2:scalePoint [ rdfs:label "Random" ; rdf:value 5.0 ] ;
+     lv2:scalePoint [ rdfs:label "StairStep" ; rdf:value 6.0 ] ;
+     lv2:documentation """
+<p>LFO 1 shape</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 111;
+     lv2:symbol "lfo1_phase" ;
+     lv2:name "LFO1 Phase" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>LFO 1 starting phase (note on only)</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 112;
+     lv2:symbol "lfo1_sync" ;
+     lv2:name "LFO1 Sync" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>Synchronize LFO 2 rate as a ratio of beats per minute</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 113;
+     lv2:symbol "lfo2_freq" ;
+     lv2:name "LFO2 Rate" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 20.0 ;
+     lv2:documentation """
+<p>LFO 2 rate</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 114;
+     lv2:symbol "lfo2_amp" ;
+     lv2:name "LFO2 Amplitude" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>LFO 2 depth</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 115;
+     lv2:symbol "lfo2_wave" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "LFO2 Wave" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 7.0 ;
+     lv2:default 0.0 ;
+     lv2:scalePoint [ rdfs:label "Sine" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Triangle" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "Saw" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "RevSaw" ; rdf:value 3.0 ] ;
+     lv2:scalePoint [ rdfs:label "Square" ; rdf:value 4.0 ] ;
+     lv2:scalePoint [ rdfs:label "StairStep" ; rdf:value 5.0 ] ;
+     lv2:scalePoint [ rdfs:label "Random" ; rdf:value 6.0 ] ;     
+     lv2:documentation """
+<p>LFO2 shape</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 116;
+     lv2:symbol "lfo2_phase" ;
+     lv2:name "LFO2 Phase" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>LFO 2 starting phase (note on only)</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 117;
+     lv2:symbol "lfo2_sync" ;
+     lv2:name "LFO2 Sync" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>Synchronize LFO 2 rate as a ratio of beats per minute</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 118;
+     lv2:symbol "lfo3_freq" ;
+     lv2:name "LFO3 Rate" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 40.0 ;
+     lv2:documentation """
+<p>LFO 3 rate</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 119;
+     lv2:symbol "lfo3_amp" ;
+     lv2:name "LFO3 Amplitude" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>LFO 3 depth</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 120;
+     lv2:symbol "lfo3_wave" ;
+     lv2:portProperty lv2:integer ;
+     lv2:name "LFO3 Wave" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 7.0 ;
+     lv2:default 0.0 ;
+     lv2:scalePoint [ rdfs:label "Sine" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Triangle" ; rdf:value 1.0 ] ;
+     lv2:scalePoint [ rdfs:label "Saw" ; rdf:value 2.0 ] ; 
+     lv2:scalePoint [ rdfs:label "RevSaw" ; rdf:value 3.0 ] ;
+     lv2:scalePoint [ rdfs:label "Square" ; rdf:value 4.0 ] ;
+     lv2:scalePoint [ rdfs:label "Stair" ; rdf:value 5.0 ] ;
+     lv2:scalePoint [ rdfs:label "Random" ; rdf:value 6.0 ] ;
+     lv2:documentation """
+<p>LFO 3 shape</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 121;
+     lv2:symbol "lfo3_phase" ;
+     lv2:name "LFO3 Phase" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>LFO 3 starting phase (note on only)</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:index 122;
+     lv2:symbol "lfo3_sync" ;
+     lv2:name "LFO3 Sync" ;
+     lv2:default 0.0 ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:documentation """
+<p>Synchronize LFO 3 rate as a ratio of beats per minute</p>
+""" ;
+    ];
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "AMP ENV1 Attack" ;
+     lv2:index 123;
+     lv2:symbol "env1_attack" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 10.0 ;
+     lv2:default 0.001 ;
+     lv2:documentation """
+<p>Amplitude envelope (OSC1) attack time (seconds)</p>
+""" ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "AMP ENV1 Decay" ;
+     lv2:index 124;
+     lv2:symbol "env1_decay" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 10.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Amplitude envelope (OSC1) decay time (seconds)</p>
+""" ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "AMP ENV1 Sustain" ;
+     lv2:index 125;
+     lv2:symbol "env1_sustain" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 1.0 ;
+     lv2:documentation """
+<p>Amplitude envelope (OSC1) sustain amount (seconds)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "AMP ENV1 Release (ms)" ;
+     lv2:index 126;
+     lv2:symbol "env1_release" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.02 ;
+     lv2:documentation """
+<p>Amplitude envelope (OSC1) release time (seconds)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "AMP ENV1 Trigger" ;
+     lv2:index 127;
+     lv2:symbol "env1_trigger" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:scalePoint [ rdfs:label "Poly" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Loop" ; rdf:value 1.0 ] ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "AMP ENV2 Attack" ;
+     lv2:index 128;
+     lv2:symbol "env2_attack" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.001 ;
+     lv2:documentation """
+<p>Amplitude envelope (OSC1) attack time (seconds)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "AMP ENV2 Decay" ;
+     lv2:index 129;
+     lv2:symbol "env2_decay" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Amplitude envelope (OSC1) decay time (seconds)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "AMP ENV2 Sustain";
+     lv2:index 130;
+     lv2:symbol "env2_sustain_level" ;
+     lv2:minimum 0.0000 ;
+     lv2:maximum 1.0 ;
+     lv2:default 1.0 ;
+     lv2:documentation """
+<p>Amplitude envelope (OSC1) sustain amount (seconds)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "AMP ENV2 Release" ;
+     lv2:index 131;
+     lv2:symbol "env2_release" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.02 ;
+     lv2:documentation """
+<p>Amplitude envelope (OSC1) release time (seconds)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "AMP ENV2 Trigger" ;
+     lv2:index 132;
+     lv2:symbol "env2_trigger" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:scalePoint [ rdfs:label "Poly" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Loop" ; rdf:value 1.0 ] ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "ENV3 Attack" ;
+     lv2:index 133;
+     lv2:symbol "env3_attack" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.001 ;
+     lv2:documentation """
+<p>Envelope 3 attack time (seconds)</p>
+""" ;
+    ] ;
+  
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "ENV3 Decay" ;
+     lv2:index 134;
+     lv2:symbol "env3_decay" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Envelope 3 decay time (seconds)</p>
+""" ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "ENV3 Sustain" ;
+     lv2:index 135;
+     lv2:symbol "env3_sustain" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 1.0 ;
+     lv2:documentation """
+<p>Envelope 3 sustain amount</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "ENV3 Release (ms)" ;
+     lv2:index 136;
+     lv2:symbol "env3_release" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.002 ;
+     lv2:documentation """
+<p>Envelope 3 release time (seconds)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "ENV3 Trigger" ;
+     lv2:index 137;
+     lv2:symbol "env3_trigger" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:scalePoint [ rdfs:label "Poly" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Loop" ; rdf:value 1.0 ] ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "ENV4 Attack" ;
+     lv2:index 138;
+     lv2:symbol "env4_attack" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.001 ;
+     lv2:documentation """
+<p>Envelope 4 attack time (seconds)</p>
+""" ;
+    ] ;
+    lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "ENV4 Decay" ;
+     lv2:index 139;
+     lv2:symbol "env4_decay" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Envelope 4 decay time (seconds)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "ENV4 Sustain" ;
+     lv2:index 140;
+     lv2:symbol "env4_sustain" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 1.0 ;
+     lv2:documentation """
+<p>Envelope 4 sustain amount</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "ENV4 Release (ms)" ;
+     lv2:index 141;
+     lv2:symbol "env4_release" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.002 ;
+     lv2:documentation """
+<p>Envelope 4 release time (seconds)</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "ENV4 Trigger" ;
+     lv2:index 142;
+     lv2:symbol "env4_trigger" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:scalePoint [ rdfs:label "Poly" ; rdf:value 0.0 ] ;
+     lv2:scalePoint [ rdfs:label "Loop" ; rdf:value 1.0 ] ;
+     lv2:documentation """
+<p></p>
+""" ;
+   ] ;
+  lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "NotesOff" ;
+     lv2:index 143;
+     lv2:symbol "notesoff" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>All notes off trigger</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Unused 1" ;
+     lv2:index 144;
+     lv2:symbol "unused_1" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Unused 2" ;
+     lv2:index 145;
+     lv2:symbol "unused_2" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Unused 3" ;
+     lv2:index 146;
+     lv2:symbol "unused_3" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Unused 4" ;
+     lv2:index 147;
+     lv2:symbol "unused_4" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Unused 5" ;
+     lv2:index 148;
+     lv2:symbol "unused_5" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Unused 6" ;
+     lv2:index 149;
+     lv2:symbol "unused_6" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Unused 7" ;
+     lv2:index 150;
+     lv2:symbol "unused_7" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Unused 8" ;
+     lv2:index 151;
+     lv2:symbol "unused_8" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Unused 9" ;
+     lv2:index 152;
+     lv2:symbol "unused_9" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI Learn On" ;
+     lv2:index 153;
+     lv2:symbol "midi_learn_on" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI Channel" ;
+     lv2:index 154;
+     lv2:symbol "midi_channel" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 16.0 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Keyboard split" ;
+     lv2:index 155;
+     lv2:symbol "key_splt" ;
+     lv2:portProperty lv2:integer ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 1.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>Incoming notes are split on C-4 between oscillator 1 and oscillator 2</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Last port" ;
+     lv2:index 156;
+     lv2:symbol "last_port" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 256.0 ;
+     lv2:default 0.0 ;
+     lv2:documentation """
+<p>The last port that was adjsuted via the UI. Used for MIDI learn</p>
+""" ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 1" ;
+     lv2:index 157;
+     lv2:symbol "midi_learn1" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 2" ;
+     lv2:index 158;
+     lv2:symbol "midi_learn2" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 3" ;
+     lv2:index 159;
+     lv2:symbol "midi_learn3" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 4" ;
+     lv2:index 160;
+     lv2:symbol "midi_learn4" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 5" ;
+     lv2:index 161;
+     lv2:symbol "midi_learn5" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 6" ;
+     lv2:index 162;
+     lv2:symbol "midi_learn6" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 7" ;
+     lv2:index 163;
+     lv2:symbol "midi_learn7" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 8" ;
+     lv2:index 164;
+     lv2:symbol "midi_learn8" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 9" ;
+     lv2:index 165;
+     lv2:symbol "midi_learn9" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 10" ;
+     lv2:index 166;
+     lv2:symbol "midi_learn10" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+  lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 11" ;
+     lv2:index 167;
+     lv2:symbol "midi_learn11" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 12" ;
+     lv2:index 168;
+     lv2:symbol "midi_learn12" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 13" ;
+     lv2:index 169;
+     lv2:symbol "midi_learn13" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 14" ;
+     lv2:index 170;
+     lv2:symbol "midi_learn14" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 15" ;
+     lv2:index 171;
+     lv2:symbol "midi_learn15" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ] ;
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "MIDI slot 16" ;
+     lv2:index 172;
+     lv2:symbol "midi_learn16" ;
+     lv2:minimum 0.0 ;
+     lv2:maximum 65535 ;
+     lv2:default 0.0 ;
+   ]  .

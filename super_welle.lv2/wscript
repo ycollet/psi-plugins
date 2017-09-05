@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+from waflib.extras import autowaf as autowaf
+import re
+
+# Variables for 'waf dist'
+APPNAME = 'super_welle-psi.lv2'
+VERSION = '0.0.1'
+
+# Mandatory variables
+top = '.'
+out = 'build'
+
+def options(opt):
+    opt.load('compiler_c')
+    autowaf.set_options(opt)
+
+def configure(conf):
+    conf.load('compiler_c')
+    autowaf.configure(conf)
+    autowaf.set_c99_mode(conf)
+    autowaf.display_header('Super Welle Synth Configuration')
+
+    if not autowaf.is_child():
+        autowaf.check_pkg(conf, 'lv2', uselib_store='LV2')
+        
+    autowaf.check_pkg(conf, 'ntk', uselib_store='NTK',
+        mandatory=True)    
+    autowaf.check_pkg(conf, 'ntk_images', uselib_store='NTK_IMAGES',
+        mandatory=True)    
+    autowaf.display_msg(conf, 'LV2 bundle directory', conf.env.LV2DIR)
+    print('')
+    conf.env.CXXFLAGS.append('-DLV2_DIR="'+conf.env.LV2DIR+'"')
+    
+def build(bld):
+    bundle = 'super_welle-psi.lv2'
+
+    # Make a pattern for shared objects without the 'lib' prefix
+    module_pat = re.sub('^lib', '', bld.env.cshlib_PATTERN)
+    module_ext = module_pat[module_pat.rfind('.'):]
+
+    # Build manifest.ttl by substitution (for portable lib extension)
+    bld(features     = 'subst',
+        source       = 'manifest.ttl.in',
+        target       = '%s/%s' % (bundle, 'manifest.ttl'),
+        install_path = '${LV2DIR}/%s' % bundle,
+        LIB_EXT      = module_ext)
+
+    # Copy other data files to build bundle
+    for i in ['super_welle.ttl','README.md','knob.png']:
+        bld(features     = 'subst',
+            is_copy      = True,
+            source       = i,
+            target       = '%s/%s' % (bundle, i),
+            install_path = '${LV2DIR}/%s' % bundle)
+
+    # Use LV2 headers from parent directory if building as a sub-project
+    includes = ['../UI','/usr/include','../util','../common']
+    print bld.env.cflags
+    # Build plugin library
+    obj = bld(features     = 'c cshlib',
+              source       = ['../common/bl_osc.c','../common/voice.c','synth.c','super_welle.c'],
+              name         = 'super_welle',
+              target       = '%s/super_welle' % bundle,
+              install_path = '${LV2DIR}/%s' % bundle,
+              uselib       = ['LV2','M','stdc++'],
+              #cflags       = '-O2 -Wall -msse -mfpmath=sse',
+              includes     = includes)
+    obj.env.cshlib_PATTERN = module_pat
+    # Build plugin UI library # 3
+    obj = bld(features     = 'cxx cxxshlib',
+              source       = ['../UI/psiDialX.cxx','super_welle_widget.cxx','super_welle_ui.cxx'],
+              name         = 'super_welle_ui',
+              target       = '%s/super_welle_ui' % bundle,
+              install_path = '${LV2DIR}/%s' % bundle,
+              uselib       = 'LV2 M NTK NTK_IMAGES',
+              includes     = includes)
+    obj.env.cxxshlib_PATTERN = module_pat
+

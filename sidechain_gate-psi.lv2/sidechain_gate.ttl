@@ -1,0 +1,223 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix epp: <http://lv2plug.in/ns/dev/extportinfo#> .
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix urid: <http://lv2plug.in/ns/ext/urid#> .
+@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .
+
+<http://bjones.it/who/bsjones>
+   a foaf:Person ;
+   foaf:name "Brendan Jones" ;
+   foaf:mbox <mailto:brendan.jones.it@gmail.com> ;
+   foaf:homepage <http://bjones.it/> .
+
+<http://bjones.it/psi-plugins/sidechain_gate/ui>
+  a ui:X11UI ;
+  lv2:requiredFeature urid:map ;
+  lv2:optionalFeature ui:noUserResize ;
+
+  ui:portNotification [
+    ui:plugin <http://bjones.it/psi-plugins/sidechain_gate> ;
+    lv2:symbol "notify" ;
+    ui:notifyType atom:Blank
+  ] .
+  
+<http://bjones.it/psi-plugins/sidechain_gate>
+   a lv2:Plugin, lv2:GatePlugin;
+   doap:name "Stereo Sidechain Gate" ;
+   doap:maintainer <http://bjones.it/who/bsjones> ;
+   doap:license <http://usefulinc.com/doap/licenses/gpl> ;
+   ui:ui <http://bjones.it/psi-plugins/sidechain_gate/ui>;
+   lv2:optionalFeature lv2:hardRTCapable ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:AudioPort ;
+     lv2:index 0 ;
+     lv2:symbol "left_in" ;
+     lv2:name "in_left" ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:AudioPort ;
+     lv2:index 1 ;
+     lv2:symbol "right_in" ;
+     lv2:name "in_right" ;
+   ] ;  
+ 
+   lv2:port [
+     a lv2:InputPort, lv2:AudioPort ;
+     lv2:index 2 ;
+     lv2:symbol "sidechain_in" ;
+     lv2:name "sidechain" ;  
+    ] ;
+      
+   lv2:port [
+     a lv2:OutputPort, lv2:AudioPort ;
+     lv2:index 3 ;
+     lv2:symbol "left_out" ;
+     lv2:name "out_left" ;
+   ] ;
+  
+   lv2:port [
+     a lv2:OutputPort, lv2:AudioPort ;
+     lv2:index 4 ;
+     lv2:symbol "right_out" ;
+     lv2:name "out_right" ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Low Cut (Hz)" ;
+     lv2:index 5 ;
+     lv2:symbol "lf_fc" ;
+     lv2:minimum 25.0 ;
+     lv2:maximum 4000.0 ;
+     lv2:default 500.0 ;
+     lv2:portProperty epp:logarithmic ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "High Cut (Hz)" ;
+     lv2:index 6 ;
+     lv2:symbol "hf_fc" ;
+     lv2:minimum 250.0 ;
+     lv2:maximum 20000.0 ;
+     lv2:default 2000.0 ;
+     lv2:portProperty epp:logarithmic ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Threshold (dB)" ;
+     lv2:index 7 ;
+     lv2:symbol "threshold" ;
+     lv2:minimum -70.0 ;
+     lv2:maximum +20.0 ;
+     lv2:default -40.0 ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Hystereis (dB)" ;
+     lv2:index 8 ;
+     lv2:symbol "hysteresis";
+     lv2:minimum -70.0 ;
+     lv2:maximum 0.0 ;
+     lv2:default -40.0 ;
+   ] ;
+   
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Attack (ms)" ;
+     lv2:index 9 ;
+     lv2:symbol "attack" ;
+     lv2:minimum 0.01 ;
+     lv2:maximum 1000.0 ;
+     lv2:default 0.1 ;
+     lv2:portProperty epp:logarithmic ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Hold (ms)" ;
+     lv2:index 10 ;
+     lv2:symbol "hold" ;
+     lv2:minimum 0.01 ;
+     lv2:maximum 2000.0 ;
+     lv2:default 50.0 ;
+     lv2:portProperty epp:logarithmic ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Decay (ms)" ;
+     lv2:index 11 ;
+     lv2:symbol "decay" ;
+     lv2:minimum 0.01 ;
+     lv2:maximum 4000.0 ;
+     lv2:default 50.0 ;
+     lv2:portProperty epp:logarithmic ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Reduction (dB)" ;
+     lv2:index 12 ;
+     lv2:symbol "range" ;
+     lv2:minimum -90.0 ;
+     lv2:maximum 0.0 ;
+     lv2:default -20.0 ;
+   ] ;
+   
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Output select (-1 = input listen, 0 = gate, 1 = bypass)" ;
+     lv2:index 13 ;
+     lv2:symbol "select" ;
+     lv2:minimum -1 ;
+     lv2:maximum 1 ;
+     lv2:default 0 ;
+     lv2:rangeSteps 3 ; 
+     lv2:portProperty lv2:integer ;
+   ] ;
+  
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Key Level L (dB)" ;
+     lv2:index 14 ;
+     lv2:symbol "level_left" ;
+     lv2:minimum -90.0 ;
+     lv2:maximum 0.0 ;
+     lv2:default -70.0 ;
+   ] ;
+  
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Key Level R (dB)" ;
+     lv2:index 15 ;
+     lv2:symbol "level_right" ;
+     lv2:minimum -70.0 ;
+     lv2:maximum 0.0 ;
+     lv2:default -70.0 ;
+   ] ;
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Gate state" ;
+     lv2:index 16;
+     lv2:symbol "gate_state" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+   ] ;
+  
+   lv2:port [
+     a lv2:InputPort, lv2:ControlPort ;
+     lv2:name "Input select (0 = input signal, 1 = sidechain input)" ;
+     lv2:index 17 ;
+     lv2:symbol "chain_bal" ;
+     lv2:minimum 0 ;
+     lv2:maximum 1 ;
+     lv2:default 0.0 ;
+   ] ;
+   
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Out Level L (dB)" ;
+     lv2:index 18 ;
+     lv2:symbol "out_level_left" ;
+     lv2:minimum -70.0 ;
+     lv2:maximum 0.0 ;
+     lv2:default -70.0 ;
+   ] ;
+  
+   lv2:port [
+     a lv2:OutputPort, lv2:ControlPort ;
+     lv2:name "Out Level R (dB)" ;
+     lv2:index 19 ;
+     lv2:symbol "out_level_right" ;
+     lv2:minimum -70.0 ;
+     lv2:maximum 0.0 ;
+     lv2:default -70.0 ;
+   ] .
+  

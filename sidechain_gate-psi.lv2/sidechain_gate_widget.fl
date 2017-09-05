@@ -1,0 +1,402 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"} {public global
+} 
+
+decl {\#include <FL/Fl.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Value_Output.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Value_Input.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Dial.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Double_Window.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Slider.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Theme.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Tooltip.H>} {public global
+} 
+
+decl {\#include <FL/Fl_XPM_Image.H>} {public global
+} 
+
+decl {\#include <FL/Fl_PNG_Image.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Fill_Slider.H>} {public global
+} 
+
+decl {\#include "UI/Envelope.H"} {public global
+} 
+
+decl {\#include "UI/PeakMeter.H"} {public global
+} 
+
+decl {\#include "UI/psiDialX.H"} {public global
+} 
+
+decl {\#include "UI/psiLabelBox.H"} {public global
+} 
+
+decl {\#include "sidechain_gate.h"} {public global
+} 
+
+decl {\#ifndef LV2_DIR 
+\#define LV2_DIR "/usr/lib64/lv2" 
+\#endif
+} {public global
+} 
+
+class SidechainGateUI {open
+} {
+  Function {update_button(int button)} {open return_type void
+  } {
+    code {} {}
+  }
+  Function {SidechainGateUI()} {open
+  } {
+    Fl_Window window {
+      label {Sidechain Gate} open
+      xywh {183 216 720 265} type Double color 48 resizable
+      code2 {using namespace std;}
+      code3 {Fl_Theme::set( "Gleam");
+          Fl_Tooltip::color(FL_BLACK);
+          Fl_Tooltip::textcolor(221);
+          Fl_Tooltip::size(11);
+
+          Fl_Dial::default_style(Fl_Dial::PIXMAP_DIAL);
+          Fl_PNG_Image* dial_image = new Fl_PNG_Image( LV2_DIR "/sidechain_gate-psi.lv2/knob.png");
+          Fl_Image* dimage = dial_image->copy();
+          psiDialX::default_image(dimage);} visible
+    } {
+      Fl_Box lbox {
+        label {psi Sidechain Gate}
+        xywh {0 0 720 265} color 48 selection_color 80
+        code0 {o->label_align( 125, 15, LBL_LEFT, 5, 10, BOX_NORMAL);}
+        class psiLabelBox
+      }
+      Fl_Group {} {open
+        xywh {190 20 525 240} box ROUNDED_BOX selection_color 50
+      } {
+        Fl_Box adsr_box {
+          xywh {210 45 310 110} box THIN_UP_BOX labeltype NO_LABEL align 514
+          code0 {o->set_range(-70.0f,20.0f,7000.0f,-25.0f);}
+          class {psi::Envelope}
+        }
+        Fl_Dial attack {
+          label Attack
+          callback {attack_out->value(o->value());
+adsr_box->attack(attack->value());
+writePort( int(SCGATE_ATTACK),o->value());}
+          xywh {225 165 50 50} color 72 labelsize 10 maximum 1000 step 1 value 2
+          class psiDialX
+        }
+        Fl_Dial hold {
+          label Hold
+          callback {hold_out->value(o->value());
+adsr_box->sustain(hold->value());
+writePort( int(SCGATE_HOLD),o->value());}
+          xywh {300 165 50 50} color 72 labelsize 10 maximum 2000 step 1 value 100
+          class psiDialX
+        }
+        Fl_Dial release {
+          label Release
+          callback {release_out->value(o->value());
+adsr_box->release(release_out->value());
+writePort( int(SCGATE_DECAY),o->value());}
+          xywh {375 165 50 50} color 72 labelsize 10 minimum 1 maximum 4000 step 1 value 10
+          class psiDialX
+        }
+        Fl_Value_Input attack_out {
+          callback {attack->value(o->value());
+writePort( int(SCGATE_ATTACK),o->value());
+adsr_box->attack(attack->value());}
+          xywh {230 230 40 20} align 8 maximum 1000 step 1 value 10 textsize 10
+          code3 {o->visible_focus(0);}
+          class Fl_Value_Input
+        }
+        Fl_Value_Input hold_out {
+          callback {hold->value(o->value());
+adsr_box->sustain(hold->value());
+writePort( int(SCGATE_HOLD),o->value());}
+          xywh {306 230 40 20} align 8 maximum 2000 step 1 value 100 textsize 10
+          code3 {o->visible_focus(0);}
+          class Fl_Value_Input
+        }
+        Fl_Value_Input release_out {
+          callback {release->value(o->value());
+adsr_box->release(release->value());
+writePort( int(SCGATE_DECAY),o->value());}
+          xywh {380 230 40 20} align 8 maximum 2000 step 1 value 100 textsize 10
+          code3 {o->visible_focus(0);}
+          class Fl_Value_Input
+        }
+        Fl_Value_Slider threshold {
+          callback {threshold_out->value(o->value());
+writePort( int(SCGATE_THRESHOLD),o->value());
+if (o->value()<hysterisis->value()) {
+   hysterisis->value(o->value());   
+   hysterisis->do_callback();
+}}
+          xywh {540 50 20 180} box ROUND_UP_BOX labelsize 10 align 1 minimum 20 maximum -70 step 1 value -25
+          code3 {o->visible_focus(0);}
+          class Fl_Slider
+        }
+        Fl_Value_Slider hysterisis {
+          callback {hysterisis_out->value(o->value());
+writePort( int(SCGATE_HYSTER),o->value());
+if (o->value()>threshold->value()) {
+   threshold->value(o->value());   
+   threshold->do_callback();
+}}
+          xywh {580 50 20 180} box ROUND_UP_BOX labelsize 10 align 1 minimum 20 maximum -70 step 1 value -25
+          code3 {o->visible_focus(0);}
+          class Fl_Slider
+        }
+        Fl_Value_Slider range {
+          callback {range_out->value(o->value());
+adsr_box->set_range(range->value());
+writePort( int(SCGATE_RANGE),o->value());}
+          xywh {620 50 20 180} box ROUND_UP_BOX labelsize 10 align 1 minimum 20 maximum -70 step 1 value -25
+          code3 {o->visible_focus(0);}
+          class Fl_Slider
+        }
+        Fl_Value_Input threshold_out {
+          callback {threshold->value(o->value());
+writePort( int(SCGATE_THRESHOLD),o->value());}
+          xywh {540 225 20 20} align 8 minimum 20 maximum -70 step 1 value -25 textsize 10
+          code3 {o->visible_focus(0);}
+          class Fl_Value_Input
+        }
+        Fl_Value_Input hysterisis_out {
+          callback {hysterisis->value(o->value());
+writePort( int(SCGATE_HYSTER),o->value());}
+          xywh {580 225 20 20} align 8 minimum 20 maximum -70 step 1 value -25 textsize 10
+          code3 {o->visible_focus(0);}
+          class Fl_Value_Input
+        }
+        Fl_Value_Input range_out {
+          callback {range->value(o->value());
+adsr_box->set_range(range_out->value());
+writePort( int(SCGATE_RANGE),o->value());
+if (o->value()>threshold->value()) {
+   threshold->value(o->value());	
+   threshold->do_callback();
+}}
+          xywh {620 225 20 20} align 8 minimum 20 maximum -70 step 1 value -25 textsize 10
+          code3 {o->visible_focus(0);}
+          class Fl_Value_Input
+        }
+        Fl_Light_Button gate_state {
+          label Open
+          xywh {450 165 70 20} box ROUND_UP_BOX value 1 selection_color 93 labelsize 10 when 6
+          code3 {o->visible_focus(0);}
+        }
+        Fl_Light_Button select_l {
+          label Input
+          callback {if (o->value()==1) {
+   writePort(int(SCGATE_SELECT),-1.0f);
+   select_g->value(0);    
+   select_b->value(0);    
+} else {
+   writePort(int(SCGATE_SELECT),0.0f);
+   select_g->value(1);    
+   select_g->do_callback();
+   select_b->value(0);    
+}}
+          xywh {450 190 70 20} box ROUND_UP_BOX value 1 selection_color 72 labelsize 10 when 6
+          code3 {o->visible_focus(0);}
+        }
+        Fl_Light_Button select_g {
+          label Gate
+          callback {if (o->value()==1) {
+   writePort(int(SCGATE_SELECT),0.0f);
+   select_l->value(0);    
+   select_b->value(0);    
+} else {
+   writePort(int(SCGATE_SELECT),1.0f);
+   select_l->value(0);    
+   select_b->value(1);    
+   select_b->do_callback();
+}}
+          xywh {450 210 70 20} box ROUND_UP_BOX value 1 selection_color 72 labelsize 10 when 6
+          code3 {o->visible_focus(0);}
+        }
+        Fl_Light_Button select_b {
+          label Bypass
+          callback {if (o->value()==1) {
+   writePort(int(SCGATE_SELECT),1.0f);
+   select_g->value(0);    
+   select_l->value(0);    
+} else {
+   writePort(int(SCGATE_SELECT),0.0f);
+   select_g->value(1);
+   select_g->do_callback();
+   select_l->value(0);    
+}}
+          xywh {450 230 70 20} box ROUND_UP_BOX value 1 selection_color 72 labelsize 10 when 6
+          code3 {o->visible_focus(0);}
+        }
+      }
+      Fl_Group {} {open selected
+        xywh {5 20 180 240} box ROUNDED_BOX selection_color 51
+      } {
+        Fl_Box {} {
+          label {Input Select:}
+          xywh {35 30 35 16} labelsize 10
+        }
+        Fl_Light_Button chain_bal_side {
+          label Sidechain
+          callback {if (o->value()==1) {
+   writePort(int(SCGATE_CHAIN_BAL),1.0f);
+   chain_bal_in->value(0);   
+} else {
+   writePort(int(SCGATE_CHAIN_BAL),0.0f);
+   chain_bal_in->value(1);   
+}}
+          tooltip {Open the gate on MIDI Note On} xywh {100 30 70 20} value 1 selection_color 80 labelsize 10
+          code3 {o->visible_focus(0);}
+        }
+        Fl_Light_Button chain_bal_in {
+          label Internal
+          callback {if (o->value()==1) {
+   writePort(int(SCGATE_CHAIN_BAL),0.0f);
+   chain_bal_side->value(0);   
+} else {
+   writePort(int(SCGATE_CHAIN_BAL),1.0f);
+   chain_bal_side->value(1);   
+}}
+          tooltip {Open the gate on MIDI Note On} xywh {100 50 70 20} value 1 selection_color 80 labelsize 10
+          code3 {o->visible_focus(0);}
+        }
+        Fl_Dial hf_fc {
+          label {Hi Cut}
+          callback {hf_fc_out->value(o->value());
+writePort( int(SCGATE_HF),o->value());}
+          xywh {25 75 50 50} color 72 labelsize 10 minimum 250 maximum 20000 step 1 value 2000
+          class psiDialX
+        }
+        Fl_Value_Slider level_left {
+          xywh {115 75 20 155} box ROUND_UP_BOX labelsize 10 align 1 minimum 6 maximum -70 step 1 value -70
+          code3 {o->visible_focus(0);}
+          class {psi::PeakMeter}
+        }
+        Fl_Value_Slider level_right {
+          xywh {135 75 20 155} box ROUND_UP_BOX labelsize 10 align 1 minimum 6 maximum -70 step 1 value -70
+          code3 {o->visible_focus(0);}
+          class {psi::PeakMeter}
+        }
+        Fl_Value_Input hf_fc_out {
+          callback {hf_fc_out->value(o->value());
+writePort( int(SCGATE_HF),o->value());}
+          xywh {30 140 40 20} align 8 minimum 250 maximum 20000 step 1 value 2000 textsize 10
+          code3 {o->visible_focus(0);}
+          class Fl_Value_Input
+        }
+        Fl_Dial lf_fc {
+          label {Low Cut}
+          callback {lf_fc_out->value(o->value());
+writePort( int(SCGATE_LF),o->value());}
+          xywh {25 160 50 50} color 72 labelsize 10 minimum 25 maximum 4000 step 1 value 500
+          class psiDialX
+        }
+        Fl_Value_Input lf_fc_out {
+          callback {lf_fc->value(o->value());
+writePort( int(SCGATE_LF),o->value());}
+          xywh {30 230 40 20} align 8 minimum 25 maximum 4000 step 1 value 500 textsize 10
+          code3 {o->visible_focus(0);}
+          class Fl_Value_Input
+        }
+        Fl_Value_Output level_left_out {
+          xywh {115 230 20 20} box DOWN_BOX align 10 minimum -70 maximum 6 step 1 value -70 textsize 10
+          code3 {o->visible_focus(0);}
+          class Fl_Value_Input
+        }
+        Fl_Value_Output level_right_out {
+          xywh {135 230 20 20} box DOWN_BOX align 10 minimum -70 maximum 6 step 1 value -70 textsize 10
+          code3 {o->visible_focus(0);}
+          class Fl_Value_Input
+        }
+      }
+      Fl_Value_Slider out_level_left {
+        xywh {660 50 20 180} box ROUND_UP_BOX labelsize 10 align 1 minimum 20 maximum -70 step 1 value -25
+        code3 {o->visible_focus(0);}
+        class {psi::PeakMeter}
+      }
+      Fl_Value_Slider out_level_right {
+        xywh {680 50 20 180} box ROUND_UP_BOX labelsize 10 align 1 minimum 20 maximum -70 step 1 value -25
+        code3 {o->visible_focus(0);}
+        class {psi::PeakMeter}
+      }
+      Fl_Value_Output out_level_left_out {
+        xywh {660 225 20 20} box DOWN_BOX align 10 minimum -70 maximum 6 step 1 value -70 textsize 10
+        code3 {o->visible_focus(0);}
+        class Fl_Value_Input
+      }
+      Fl_Value_Output out_level_right_out {
+        xywh {680 225 20 20} box DOWN_BOX align 10 minimum -70 maximum 6 step 1 value -70 textsize 10
+        code3 {o->visible_focus(0);}
+        class Fl_Value_Input
+      }
+      Fl_Box {} {
+        label Thresh
+        xywh {535 29 35 16} labelsize 10
+      }
+      Fl_Box {} {
+        label Hyster
+        xywh {575 29 35 16} labelsize 10
+      }
+      Fl_Box {} {
+        label Range
+        xywh {615 29 35 16} labelsize 10
+      }
+      Fl_Box {} {
+        label {Out dB}
+        xywh {663 29 35 16} labelsize 10
+      }
+    }
+  }
+  decl {LV2UI_Write_Function write_function;} {public local
+  }
+  decl {LV2UI_Controller controller;} {public local
+  }
+  Function {idle()} {open return_type void
+  } {
+    code {Fl::check();
+Fl::flush();} {}
+  }
+  Function {getWidth()} {open return_type int
+  } {
+    code {return window->w();} {}
+  }
+  Function {getHeight()} {open return_type int
+  } {
+    code {return window->h();} {}
+  }
+  decl {float gain;} {private local
+  }
+  decl {float cutoff;} {private local
+  }
+  decl {float Q;} {private local
+  }
+  Function {writePort(int port, float value)} {open
+  } {
+    code {write_function(controller, port, sizeof(float), 0, &value);} {}
+  }
+  decl {\#include <FL/Fl_Slider.H>} {public global
+  }
+  decl {\#include <FL/Fl_Theme.H>} {public global
+  }
+} 
