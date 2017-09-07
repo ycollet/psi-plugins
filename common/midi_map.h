@@ -39,16 +39,15 @@ extern "C" {
 #define MIDI_PITCHBEND_MAX      8191
 
     
-/*typedef uint8_t byte;
+  /*typedef uint8_t byte;
 
-typedef byte StatusByte;
-typedef byte DataByte;
-typedef byte Channel;
-typedef byte FilterMode;
-*/
+    typedef byte StatusByte;
+    typedef byte DataByte;
+    typedef byte Channel;
+    typedef byte FilterMode;
+  */
 
-enum MidiType
-{
+  enum MidiType {
     InvalidType           = 0x00,    ///< For notifying errors
     NoteOff               = 0x80,    ///< Note Off
     NoteOn                = 0x90,    ///< Note On
@@ -68,14 +67,13 @@ enum MidiType
     Stop                  = 0xFC,    ///< System Real Time - Stop
     ActiveSensing         = 0xFE,    ///< System Real Time - Active Sensing
     SystemReset           = 0xFF,    ///< System Real Time - System Reset
-};
+  };
 
-/*! \brief Enumeration of Control Change command numbers.
- See the detailed controllers numbers & description here:
- http://www.somascape.org/midi/tech/spec.html#ctrlnums
- */
-enum MidiControlChangeNumber
-{
+  /*! \brief Enumeration of Control Change command numbers.
+    See the detailed controllers numbers & description here:
+    http://www.somascape.org/midi/tech/spec.html#ctrlnums
+  */
+  enum MidiControlChangeNumber {
     // High resolution Continuous Controllers MSB (+32 for LSB) ----------------
     BankSelect                  = 0,
     ModulationWheel             = 1,
@@ -138,9 +136,9 @@ enum MidiControlChangeNumber
     OmniModeOn                  = 125,
     MonoModeOn                  = 126,
     PolyModeOn                  = 127
-};
+  };
 
-static const char *midi_cc_values[128] = {
+  static const char *midi_cc_values[128] = {
     "BankSelect"
     , "Modulation Wheel"
     , "Breath Controller"                        // 3
@@ -204,9 +202,9 @@ static const char *midi_cc_values[128] = {
     , "Omni Mode On"
     , "Mono Mode On"
     , "Poly Mode On"
-    }; 
+  }; 
     
-static const char *midi_cc_display[128] = {
+  static const char *midi_cc_display[128] = {
     "0: Bank Select"
     , "  1: Mod Wheel"
     , "  2: Breath"
@@ -275,7 +273,7 @@ static const char *midi_cc_display[128] = {
     , "125: Omni Mode On"
     , "126: Mono Mode On"
     , "127: Poly Mode On"
-    }; 
+  }; 
 
 #ifdef __cplusplus
 }

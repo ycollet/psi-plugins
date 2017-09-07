@@ -24,6 +24,7 @@
 
 #ifndef TYPES_H
 #define TYPES_H
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -45,7 +46,6 @@ typedef SAMPLE_T sample_t;
 #define SINH sinh
 #define POW pow
 #endif
-
 
 #ifndef LN_2_2
 # define LN_2_2 0.34657359f // ln(2)/2

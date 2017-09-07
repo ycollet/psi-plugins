@@ -23,7 +23,6 @@
  *
  */
 
-
 #ifndef BL_OSC_H
 #define BL_OSC_H
 
@@ -36,37 +35,33 @@
 
 // one band
 typedef struct {
-    sample_t topFreq;
-    int waveTableLen;
-    float *waveTable;
+  sample_t topFreq;
+  int waveTableLen;
+  float *waveTable;
 } waveTable;
 
 // one for each band
 typedef struct {
-    int shape;
-    int numWaveTables;
-    waveTable waveTables[numWaveTableSlots];
+  int shape;
+  int numWaveTables;
+  waveTable waveTables[numWaveTableSlots];
 } waveTableShape;
 
 // the oscillator instance
 typedef struct {
-    sample_t  phasor;      // phase accumulator
-    sample_t  freq;        // phase increment / freq
-    sample_t  phaseOfs;    // phase offset for PWM
-    int       shape;
+  sample_t  phasor;      // phase accumulator
+  sample_t  freq;        // phase increment / freq
+  sample_t  phaseOfs;    // phase offset for PWM
+  int       shape;
 } BL_Osc;
 
-inline
-void BL_Osc_init(BL_Osc* b);
+inline void BL_Osc_init(BL_Osc* b);
 
-inline 
-void bl_freq(BL_Osc* b, sample_t inc);
+inline void bl_freq(BL_Osc* b, sample_t inc);
 
-inline 
-void bl_phase_offset(BL_Osc* b, sample_t offset);
+inline void bl_phase_offset(BL_Osc* b, sample_t offset);
 
-inline 
-void bl_update_phase(BL_Osc* b);
+inline void bl_update_phase(BL_Osc* b);
 
 float bl_output(BL_Osc* b);
 
@@ -84,29 +79,25 @@ void bl_saw_osc(long tableLen);
 
 void bl_wave_osc(int shape, float *waveSamples, int tableLen);
 
-inline
-void bl_freq(BL_Osc* b, sample_t inc) {
-    b->freq = inc;
+inline void bl_freq(BL_Osc* b, sample_t inc) {
+  b->freq = inc;
 }
 
-inline
-void bl_phase_offset(BL_Osc* b, sample_t offset) {
-    b->phaseOfs = offset;
+inline void bl_phase_offset(BL_Osc* b, sample_t offset) {
+  b->phaseOfs = offset;
 }
 
-inline
-void bl_update_phase(BL_Osc* b) {
-    b->phasor += b->freq;
+inline void bl_update_phase(BL_Osc* b) {
+  b->phasor += b->freq;
     
-    if (b->phasor >= 1.0)
-        b->phasor -= 1.0;
+  if (b->phasor >= 1.0)
+    b->phasor -= 1.0;
 }
 
-inline
-void BL_Osc_init(BL_Osc* b) {
-    b->phasor = 0.0;
-    b->freq = 0.0;
-    b->phaseOfs = 0.5;
+inline void BL_Osc_init(BL_Osc* b) {
+  b->phasor = 0.0;
+  b->freq = 0.0;
+  b->phaseOfs = 0.5;
 }
 
 #endif

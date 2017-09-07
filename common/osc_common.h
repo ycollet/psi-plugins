@@ -25,22 +25,18 @@
 #ifndef OSC_COMMON_H
 #define OSC_COMMON_H
 
-
 #define OSC_TABLE_LEN 2049
 #define BL_TABLE_LEN 2048
 #define OSC_TABLES 8
 // tablen is sample rate * O_SMPL
 #define O_SMPL 2
 
-
-enum waveshape // enumerators that represent a possible wave shape
-{
-    Sine = 0, Triangle, Saw, ReverseSaw, Square, StairStep, Pulse, PinkNs 
+enum waveshape { // enumerators that represent a possible wave shape
+  Sine = 0, Triangle, Saw, ReverseSaw, Square, StairStep, Pulse, PinkNs 
 };
 
-enum osc_type // 
-{
-    Default = 0, LFO, BLIT
+enum osc_type {
+  Default = 0, LFO, BLIT
 };
 
 #endif

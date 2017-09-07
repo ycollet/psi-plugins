@@ -48,41 +48,41 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-enum osc_idx{
-       OSC1 = 0
-       , OSC2
-};
+  enum osc_idx {
+    OSC1 = 0,
+    OSC2
+  };
 
-enum mod_source {
-        M_NONE       = 0
-      , M_L1
-      , M_L2
-      , M_L3
-      , M_E1
-      , M_E2
-      , M_E3
-      , M_E4
-      , M_EN3_INV
-      , M_EN4_INV
-      , M_L1_X
-      , M_L2_X
-      , M_L3_X
-      , M_E3_X
-      , M_E4_X
-      , M_AFTER
-      , M_PRESSURE
+  enum mod_source {
+    M_NONE       = 0
+    , M_L1
+    , M_L2
+    , M_L3
+    , M_E1
+    , M_E2
+    , M_E3
+    , M_E4
+    , M_EN3_INV
+    , M_EN4_INV
+    , M_L1_X
+    , M_L2_X
+    , M_L3_X
+    , M_E3_X
+    , M_E4_X
+    , M_AFTER
+    , M_PRESSURE
 
-};
+  };
 
-enum filter_input {
-        FI_NONE       = 0
-      , FI_OSC1OSC2
-      , FI_OSC1     
-      , FI_OSC2
-      , FI_FL1
-};
+  enum filter_input {
+    FI_NONE       = 0
+    , FI_OSC1OSC2
+    , FI_OSC1     
+    , FI_OSC2
+    , FI_FL1
+  };
 
-typedef struct {
+  typedef struct {
     sample_t        key_track;
     sample_t        mod1_amt;
     sample_t        mod2_amt;
@@ -94,16 +94,16 @@ typedef struct {
     uint8_t         mod1_retrigger;
     uint8_t         mod2_retrigger;
     uint8_t         mod3_retrigger;    
-} ModSource;
+  } ModSource;
 
-typedef struct {
+  typedef struct {
     sample_t        tuning;
     sample_t        bender;         
     sample_t        modwheel;
     sample_t        tempo;
-} GlobalParms;
+  } GlobalParms;
     
-typedef struct _osc_parms {
+  typedef struct _osc_parms {
     Filter*         hp_filter;         // frequency tracking HP filter
     Filter*         lp_filter;         // 20000HZ filter
     sample_t        amp;               // total amplitude all oscillators
@@ -121,26 +121,26 @@ typedef struct _osc_parms {
     uint8_t         uni_det;           // detune amount [ 0 .. 127 ]
     uint8_t         uni_mix;           // mix amount [ 0 .. 127 ]
     
-} OscParms;
+  } OscParms;
 
 
-typedef struct {
+  typedef struct {
     sample_t value;
     sample_t target;
     sample_t inc;
     uint32_t samples;
-} InterpParm;
+  } InterpParm;
 
-typedef struct _adsr_parms {
+  typedef struct _adsr_parms {
     sample_t        attack;
     sample_t        decay;
     sample_t        release;
     sample_t        sustain;
     uint8_t         loop;
-} AdsrParms;
+  } AdsrParms;
 
-typedef struct _voice 
-{
+  typedef struct _voice 
+  {
     OscWave*    lfo1;
     OscWave*    lfo2;
     OscWave*    lfo3;
@@ -186,277 +186,239 @@ typedef struct _voice
     uint8_t     vel;                        // incoming velocity
     uint8_t     channel;                    // channel
     uint8_t     key_split;                  // key split
-    
-    
-} Voice;
+  } Voice;
 
-/*
- * Pre-alloc all voices, envelopes and oscillators
- */
-void 
-voice_init_all(Voice** v, const sample_t s_rate, Roland* r);
+  /*
+   * Pre-alloc all voices, envelopes and oscillators
+   */
+  void voice_init_all(Voice** v, const sample_t s_rate, Roland* r);
 
-uint8_t
-voice_find_free(Voice** v);
-
-static inline sample_t midi2freq(sample_t note);
-static inline sample_t midi2freq(sample_t note)
-{
+  uint8_t voice_find_free(Voice** v);
+  
+  static inline sample_t midi2freq(sample_t note) {
     return 440.0 * pow( 2.0, (note - 69.0) / 12.0 );
-}
+  }
 
-static inline sample_t freq2midi(sample_t f);
-static inline sample_t freq2midi(sample_t f)
-{
+  static inline sample_t freq2midi(sample_t f) {
     return 12 * log2(f/440.0f) + 69.0;
-}
+  }
 
-Voice* 
-voice_set(sample_t note, const uint8_t vel, Voice* const v
-        , Filter* const filter1
-        , Filter* const filter2
-        , const float** const tables
-        , const float* const p[]
-        , const sample_t last_note);
-
-void
-voice_update(
-             Voice**        v
-           , GlobalParms*   gbl
-           , Filter* const  filter1
-           , Filter* const  filter2
-           , const float* const params[]
-           , const uint32_t len);
-
-/*
- * Simple linear interpolation over _samples
- */
-static inline void interpolate(InterpParm *i, sample_t _val, sample_t _newval
-                             , uint32_t _samples)
-{
+  Voice* voice_set(sample_t note, const uint8_t vel, Voice* const v, Filter* const filter1, Filter* const filter2,
+                   const float** const tables, const float* const p[], const sample_t last_note);
+  
+  void voice_update(Voice** v, GlobalParms* gbl, Filter* const filter1, Filter* const filter2, const float* const params[], const uint32_t len);
+  
+  /*
+   * Simple linear interpolation over _samples
+   */
+  static inline void interpolate(InterpParm *i, sample_t _val, sample_t _newval, uint32_t _samples) {
     i->samples  = _samples;
     i->target   = _newval;
     i->value    = _val;
-    if (_val == _newval) 
-    {
-        i->samples = 0;
-        i->inc  = 0;
-    }
-    else 
-    {
-        i->inc  = ( i->target - i->value ) / _samples;
-    }
-}
-
-/*
- * Simple linear interpolation over _samples
- */
-static inline sample_t interp_value(InterpParm *i)
-{
-    if (i->samples != 0) {
-        i->samples--;
-        i->value += i->inc;
+    if (_val == _newval) {
+      i->samples = 0;
+      i->inc  = 0;
     } else {
-       i->value = i->target;
+      i->inc  = ( i->target - i->value ) / _samples;
+    }
+  }
+
+  /*
+   * Simple linear interpolation over _samples
+   */
+  static inline sample_t interp_value(InterpParm *i) {
+    if (i->samples != 0) {
+      i->samples--;
+      i->value += i->inc;
+    } else {
+      i->value = i->target;
     }
     
     return i->value;
-}
+  }
     
-static inline sample_t voice_mod_phase( Voice* const v
-                                        , sample_t phase
-                                        , const ModSource* const m);
-
-static inline sample_t voice_mod_phase( Voice* const v
-                                        , sample_t phase
-                                        , const ModSource* const m)
-{
+  static inline sample_t voice_mod_phase(Voice* const v, sample_t phase, const ModSource* const m) {
     if (m->mod1) {
-        switch(m->mod1) 
-        {
-            case M_L1:
-                phase = phase + (0.95 * v->lfo1->out + 1.0) * 0.5;
-                break;
-            case M_L2:
-                phase = phase + (0.95 * v->lfo2->out + 1.0) * 0.5;
-                break;
-            case M_L3:
-                phase = phase + (0.95 * v->lfo3->out + 1.0) * 0.5;
-                break;
-            default:
-                break;
-        }
+      switch(m->mod1) {
+      case M_L1:
+        phase = phase + (0.95 * v->lfo1->out + 1.0) * 0.5;
+        break;
+      case M_L2:
+        phase = phase + (0.95 * v->lfo2->out + 1.0) * 0.5;
+        break;
+      case M_L3:
+        phase = phase + (0.95 * v->lfo3->out + 1.0) * 0.5;
+        break;
+      default:
+        break;
+      }
     }
     return phase;
-}
-            
-/* calculate modulation */
-static inline sample_t voice_mod_cutoff(Voice* const v, const ModSource* const m
-                                     , sample_t val, const sample_t note);
-static inline sample_t voice_mod_cutoff(Voice* const v, const ModSource* const m
-                                     , sample_t val, const sample_t note) {
+  }
+  
+  /* calculate modulation */
+  static inline sample_t voice_mod_cutoff(Voice* const v, const ModSource* const m,
+                                          sample_t val, const sample_t note) {
     if (m->mod1_amt + m->mod2_amt + m->mod3_amt + m->key_track ==0) return val;
     if (m->mod1 + m->mod2 + m->mod3 + m->key_track ==0) return val;
     sample_t amt = 0.0;
     
-    if (m->mod1) 
-        amt = 0;
-        switch(m->mod1) {
-            case M_L1:
-                amt = v->lfo1->out * m->mod1_amt * 64.0;
-                break;
-            case M_L2:
-                amt = v->lfo2->out * m->mod1_amt * 64.0;
-                break;
-            case M_L3:
-                amt = v->lfo3->out * m->mod1_amt * 64.0;
-                break;
-            case M_E1:
-                amt = 64.0f * m->mod1_amt * (v->env[0].output);
-                break;
-            case M_E2:
-                amt = 64.0f * m->mod1_amt * (v->env[1].output);
-                break;
-            case M_E3:
-                amt = 64.0f * m->mod1_amt * (v->env[2].output);
-                break;
-            case M_E4:
-                amt = 64.0f * m->mod1_amt * (v->env[3].output);
-                break;    
-            case M_EN3_INV:
-                amt = -64.0f * m->mod1_amt * (v->env[2].output);
-                break;
-            case M_EN4_INV:
-                amt = -64.0f * m->mod1_amt * (v->env[3].output);
-                break;    
-            case M_L1_X:
-                amt *= m->mod1_amt * (v->lfo1->out+1.0)/2;
-                break;
-            case M_L2_X:
-                amt *= m->mod1_amt * (v->lfo2->out+1.0)/2;
-                break;
-            case M_L3_X:
-                amt *= m->mod1_amt * (v->lfo3->out+1.0)/2;
-                break;
-            case M_E3_X:
-                amt *= m->mod1_amt * (v->env[2].output);
-                break;
-            case M_E4_X:
-                amt *= m->mod1_amt * (v->env[3].output);
-                break;    
-            default:
-                break;            
-        }
-    if (m->mod2) 
+    if (m->mod1) {
+      amt = 0;
+      switch(m->mod1) {
+      case M_L1:
+        amt = v->lfo1->out * m->mod1_amt * 64.0;
+        break;
+      case M_L2:
+        amt = v->lfo2->out * m->mod1_amt * 64.0;
+        break;
+      case M_L3:
+        amt = v->lfo3->out * m->mod1_amt * 64.0;
+        break;
+      case M_E1:
+        amt = 64.0f * m->mod1_amt * (v->env[0].output);
+        break;
+      case M_E2:
+        amt = 64.0f * m->mod1_amt * (v->env[1].output);
+        break;
+      case M_E3:
+        amt = 64.0f * m->mod1_amt * (v->env[2].output);
+        break;
+      case M_E4:
+        amt = 64.0f * m->mod1_amt * (v->env[3].output);
+        break;    
+      case M_EN3_INV:
+        amt = -64.0f * m->mod1_amt * (v->env[2].output);
+        break;
+      case M_EN4_INV:
+        amt = -64.0f * m->mod1_amt * (v->env[3].output);
+        break;    
+      case M_L1_X:
+        amt *= m->mod1_amt * (v->lfo1->out+1.0)/2;
+        break;
+      case M_L2_X:
+        amt *= m->mod1_amt * (v->lfo2->out+1.0)/2;
+        break;
+      case M_L3_X:
+        amt *= m->mod1_amt * (v->lfo3->out+1.0)/2;
+        break;
+      case M_E3_X:
+        amt *= m->mod1_amt * (v->env[2].output);
+        break;
+      case M_E4_X:
+        amt *= m->mod1_amt * (v->env[3].output);
+        break;    
+      default:
+        break;            
+      }
+    }
     
-        switch(m->mod2) {
-            case M_L1:
-                amt += v->lfo1->out * m->mod2_amt * 64.0;
-                break;
-            case M_L2:
-                amt += v->lfo2->out * m->mod2_amt * 64.0;
-                break;
-            case M_L3:
-                amt += v->lfo3->out * m->mod2_amt * 64.0;
-                break;
-            case M_E1:
-                amt += 64.0f * m->mod2_amt * (v->env[0].output);
-                break;
-            case M_E2:
-                amt += 64.0f * m->mod2_amt * (v->env[1].output);
-                break;
-            case M_E3:
-                amt += 64.0f * m->mod2_amt * (v->env[2].output);
-                break;
-            case M_E4:
-                amt += 64.0f * m->mod2_amt * (v->env[3].output);
-                break;    
-            case M_EN3_INV:
-                amt += -64.0f * m->mod2_amt * (v->env[2].output);
-                break;
-            case M_EN4_INV:
-                amt += -64.0f * m->mod2_amt * (v->env[3].output);
-                break;    
-            case M_L1_X:
-                amt *= m->mod2_amt * (v->lfo1->out+1.0)/2;
-                break;
-            case M_L2_X:
-                amt *= m->mod2_amt * (v->lfo2->out+1.0)/2;
-                break;
-            case M_L3_X:
-                amt *= m->mod2_amt * (v->lfo3->out+1.0)/2;
-                break;
-            case M_E3_X:
-                amt *= m->mod2_amt * (v->env[2].output);
-                break;
-            case M_E4_X:
-                amt *= m->mod2_amt * (v->env[3].output);
-                break;    
-            default:
-                break;              
-        }
+    if (m->mod2) 
+      switch(m->mod2) {
+      case M_L1:
+        amt += v->lfo1->out * m->mod2_amt * 64.0;
+        break;
+      case M_L2:
+        amt += v->lfo2->out * m->mod2_amt * 64.0;
+        break;
+      case M_L3:
+        amt += v->lfo3->out * m->mod2_amt * 64.0;
+        break;
+      case M_E1:
+        amt += 64.0f * m->mod2_amt * (v->env[0].output);
+        break;
+      case M_E2:
+        amt += 64.0f * m->mod2_amt * (v->env[1].output);
+        break;
+      case M_E3:
+        amt += 64.0f * m->mod2_amt * (v->env[2].output);
+        break;
+      case M_E4:
+        amt += 64.0f * m->mod2_amt * (v->env[3].output);
+        break;    
+      case M_EN3_INV:
+        amt += -64.0f * m->mod2_amt * (v->env[2].output);
+        break;
+      case M_EN4_INV:
+        amt += -64.0f * m->mod2_amt * (v->env[3].output);
+        break;    
+      case M_L1_X:
+        amt *= m->mod2_amt * (v->lfo1->out+1.0)/2;
+        break;
+      case M_L2_X:
+        amt *= m->mod2_amt * (v->lfo2->out+1.0)/2;
+        break;
+      case M_L3_X:
+        amt *= m->mod2_amt * (v->lfo3->out+1.0)/2;
+        break;
+      case M_E3_X:
+        amt *= m->mod2_amt * (v->env[2].output);
+        break;
+      case M_E4_X:
+        amt *= m->mod2_amt * (v->env[3].output);
+        break;    
+      default:
+        break;              
+      }
+    
     if (m->mod3) 
-        switch(m->mod3) {
-            case M_L1:
-                amt += v->lfo1->out * m->mod3_amt * 64.0;
-                break;
-            case M_L2:
-                amt += v->lfo2->out * m->mod3_amt * 64.0;
-                break;
-            case M_L3:
-                amt += v->lfo3->out * m->mod3_amt * 64.0;
-                break;
-            case M_E1:
-                amt += 64.0f * m->mod3_amt * (v->env[0].output);
-                break;
-            case M_E2:
-                amt += 64.0f * m->mod3_amt * (v->env[1].output);
-                break;
-            case M_E3:
-                amt += 64.0f * m->mod3_amt * (v->env[2].output);
-                break;
-            case M_E4:
-                amt += 64.0f * m->mod3_amt * (v->env[3].output);
-                break;    
-            case M_EN3_INV:
-                amt += -64.0f * m->mod3_amt * (v->env[2].output);
-                break;
-            case M_EN4_INV:
-                amt += -64.0f * m->mod3_amt * (v->env[3].output);
-                break;    
-            case M_L1_X:
-                amt *= m->mod3_amt * (v->lfo1->out+1.0)/2;
-                break;
-            case M_L2_X:
-                amt *= m->mod3_amt * (v->lfo2->out+1.0)/2;
-                break;
-            case M_L3_X:
-                amt *= m->mod3_amt * (v->lfo3->out+1.0)/2;
-                break;
-            case M_E3_X:
-                amt *= m->mod3_amt * (v->env[2].output);
-                break;
-            case M_E4_X:
-                amt *= m->mod3_amt * (v->env[3].output);
-                break;    
-            default:
-                break;       
-        }
+      switch(m->mod3) {
+      case M_L1:
+        amt += v->lfo1->out * m->mod3_amt * 64.0;
+        break;
+      case M_L2:
+        amt += v->lfo2->out * m->mod3_amt * 64.0;
+        break;
+      case M_L3:
+        amt += v->lfo3->out * m->mod3_amt * 64.0;
+        break;
+      case M_E1:
+        amt += 64.0f * m->mod3_amt * (v->env[0].output);
+        break;
+      case M_E2:
+        amt += 64.0f * m->mod3_amt * (v->env[1].output);
+        break;
+      case M_E3:
+        amt += 64.0f * m->mod3_amt * (v->env[2].output);
+        break;
+      case M_E4:
+        amt += 64.0f * m->mod3_amt * (v->env[3].output);
+        break;    
+      case M_EN3_INV:
+        amt += -64.0f * m->mod3_amt * (v->env[2].output);
+        break;
+      case M_EN4_INV:
+        amt += -64.0f * m->mod3_amt * (v->env[3].output);
+        break;    
+      case M_L1_X:
+        amt *= m->mod3_amt * (v->lfo1->out+1.0)/2;
+        break;
+      case M_L2_X:
+        amt *= m->mod3_amt * (v->lfo2->out+1.0)/2;
+        break;
+      case M_L3_X:
+        amt *= m->mod3_amt * (v->lfo3->out+1.0)/2;
+        break;
+      case M_E3_X:
+        amt *= m->mod3_amt * (v->env[2].output);
+        break;
+      case M_E4_X:
+        amt *= m->mod3_amt * (v->env[3].output);
+        break;    
+      default:
+        break;       
+      }
+    
     if ((amt!=0)||(m->key_track!=0)) 
-        val = midi2freq(freq2midi(val) + amt 
-                     + (note - CENTER_NOTE) * m->key_track);
+      val = midi2freq(freq2midi(val) + amt 
+                      + (note - CENTER_NOTE) * m->key_track);
+    
     if (val>20000.0) val =20000.0;
+    
     return val;
-}
+  }
 
-static sample_t 
-voice_process(Voice* const v, const uint32_t cnt
-            , sample_t* const left, sample_t* const right);
-
-static sample_t 
-voice_process(Voice* const v, const uint32_t cnt
-            , sample_t* const left, sample_t* const right)
-{
+  static sample_t voice_process(Voice* const v, const uint32_t cnt, sample_t* const left, sample_t* const right) {
     const sample_t vel  = v->vel/127.0;
     const sample_t clip = 100.0;
     const sample_t clipi = 1.0 / 100.0;
@@ -486,26 +448,23 @@ voice_process(Voice* const v, const uint32_t cnt
     ModSource offset2_m = v->osc_parms[OSC2].pwm_mod;    
     
     /*sample_t dist1      = v->osc_parms[OSC1].distortion > 0.0 
-                          ? (v->osc_parms[OSC1].distortion*2)
-                            /(1-v->osc_parms[OSC1].distortion)
-                          : 0.0;*/
+      ? (v->osc_parms[OSC1].distortion*2)
+      /(1-v->osc_parms[OSC1].distortion)
+      : 0.0;*/
     sample_t dist1      = v->osc_parms[OSC1].distortion > 0.0 
-                          ? pow(10, v->osc_parms[OSC1].distortion
-                                * v->osc_parms[OSC1].distortion * 3.0)
-                            - 1.0 + 0.0001
-                          : 0.0;
+      ? pow(10, v->osc_parms[OSC1].distortion
+            * v->osc_parms[OSC1].distortion * 3.0)
+      - 1.0 + 0.0001
+      : 0.0;
     sample_t dist2      = v->osc_parms[OSC2].distortion > 0.0 
-                          ? (v->osc_parms[OSC2].distortion*2)
-                            /(1-v->osc_parms[OSC2].distortion)
-                          : 0.0;
+      ? (v->osc_parms[OSC2].distortion*2)
+      /(1-v->osc_parms[OSC2].distortion)
+      : 0.0;
     f1->cutoff    = interp_value(&v->filter1_co);
     f2->cutoff    = interp_value(&v->filter2_co);
     
-    f1->cutoff = voice_mod_cutoff(v,&v->mod_cutoff1
-                                    , v->filter1->cutoff, v->center_note[0]);
-    f2->cutoff = voice_mod_cutoff(v,&v->mod_cutoff2
-                                    , v->filter2->cutoff, v->center_note[1]);
-    
+    f1->cutoff = voice_mod_cutoff(v,&v->mod_cutoff1, v->filter1->cutoff, v->center_note[0]);
+    f2->cutoff = voice_mod_cutoff(v,&v->mod_cutoff2, v->filter2->cutoff, v->center_note[1]);
     
     if ((v->env[0].state == adsr_idle)&&(v->env[1].state == adsr_idle)) return 0;
     
@@ -520,79 +479,69 @@ voice_process(Voice* const v, const uint32_t cnt
     adsr_process(&v->env[2]);
     adsr_process(&v->env[3]);
     
-    if ( (v->note<60 && v->key_split) || !v->key_split ) 
-    {
-        if (v->env[0].state != adsr_idle)
-        {
-            for (unsigned int j = uni1; j--; ) 
-            {
-                OscWave* o = &(v->osc[OSC1][j]);
-                if (j == 0) osc_phase(o, voice_mod_phase(v, offset1, &offset1_m));
-                note1 +=  osc_tic(o);
-            }
-            
-            if (dist1 > 0.0) 
-            {
-                //if (dist1 >= 1.0) dist1 = 0.9999;
-                //note1 = ((1+dist1)*(note1)/(1+dist1*abs(note1)));
-                
-                note1 = atan(note1 * dist1) / atan(dist1);
-                //note1 = (note1 ) / atan(dist1);
-            }
-            
-            if (sub_osc > 0.0) 
-            {
-                nsub_osc = osc_tic(v->sub_osc);
-            }
-            if (dist1 > 0.0) 
-            {
-                nsub_osc = atan(nsub_osc * dist1) / atan(dist1);
-            }
+    if ( (v->note<60 && v->key_split) || !v->key_split ) {
+      if (v->env[0].state != adsr_idle) {
+        for (unsigned int j = uni1; j--; ) {
+          OscWave* o = &(v->osc[OSC1][j]);
+          if (j == 0) osc_phase(o, voice_mod_phase(v, offset1, &offset1_m));
+          note1 +=  osc_tic(o);
         }
+            
+        if (dist1 > 0.0) {
+          //if (dist1 >= 1.0) dist1 = 0.9999;
+          //note1 = ((1+dist1)*(note1)/(1+dist1*abs(note1)));
+                
+          note1 = atan(note1 * dist1) / atan(dist1);
+          //note1 = (note1 ) / atan(dist1);
+        }
+            
+        if (sub_osc > 0.0) {
+          nsub_osc = osc_tic(v->sub_osc);
+        }
+        if (dist1 > 0.0) {
+          nsub_osc = atan(nsub_osc * dist1) / atan(dist1);
+        }
+      }
     }
     
     note1 = (note1 * adsr1 * vel * amp1 
-            + nsub_osc * adsr1 * vel * sub_osc) * v->gain;
+             + nsub_osc * adsr1 * vel * sub_osc) * v->gain;
     
     if (note1) {
-        //note1 = filter_run(v->osc_parms[OSC1].hp_filter,note1);
-        //note1 = filter_run(v->osc_parms[OSC1].lp_filter,note1);
-        if (abs(note1)>1.0) note1 = clipi * atan( note1 * clip );
-        filt1_out += filter_run(f1, note1);
+      //note1 = filter_run(v->osc_parms[OSC1].hp_filter,note1);
+      //note1 = filter_run(v->osc_parms[OSC1].lp_filter,note1);
+      if (abs(note1)>1.0) note1 = clipi * atan( note1 * clip );
+      filt1_out += filter_run(f1, note1);
     }
     
     if ( (v->note>59 && v->key_split) || !v->key_split) {
-        if (v->env[1].state != adsr_idle) 
-        {    
-            for (unsigned int j = uni2; j--; ) 
-            {
-                OscWave* o = &(v->osc[OSC2][j]);
-                if (j == 0) osc_phase(o, voice_mod_phase(v, offset2, &offset2_m));
-                note2 +=  osc_tic(o);
-            }
-            if (dist2 > 0.0) 
-            {
-                if (dist2 >= 1.0) dist2 = 0.9999;
-                note2 = (1+dist2)*note2/(1+dist2*abs(note2));
-            }
-        
-            if (noise > 0.0) 
-            {
-                nnoise = osc_tic(v->noise)*noise;
-            }
+      if (v->env[1].state != adsr_idle) {    
+        for (unsigned int j = uni2; j--; ) {
+          OscWave* o = &(v->osc[OSC2][j]);
+          if (j == 0) osc_phase(o, voice_mod_phase(v, offset2, &offset2_m));
+          note2 +=  osc_tic(o);
         }
+        if (dist2 > 0.0) {
+          if (dist2 >= 1.0) dist2 = 0.9999;
+          note2 = (1+dist2)*note2/(1+dist2*abs(note2));
+        }
+        
+        if (noise > 0.0) {
+          nnoise = osc_tic(v->noise)*noise;
+        }
+      }
     }
     note2 = (note2 * adsr2 * vel * amp2
-            + nnoise * adsr2 * vel * noise);
+             + nnoise * adsr2 * vel * noise);
             
     if (note2) {
-        if (abs(note2)>1.0) note2 = clipi * atan( note2 * clip );
-        filt2_out += filter_run(f2, note2);
+      if (abs(note2)>1.0) note2 = clipi * atan( note2 * clip );
+      filt2_out += filter_run(f2, note2);
     }
     
     if (v->glide_step > 0) {
-        v->glide_step--;
-        v->note += v->glide_factor;
+      v->glide_step--;
+      v->note += v->glide_factor;
     }
     
     mono_out  = filt2_out + filt1_out;
@@ -601,12 +550,12 @@ voice_process(Voice* const v, const uint32_t cnt
     *right   = filt2_out;
     
     if (abs(mono_out)>1.0) {
-        mono_out = clipi * atan( mono_out * clip );
+      mono_out = clipi * atan( mono_out * clip );
     }
     if (mono_out > 1.0) printf("overflow3: %f\n",mono_out);
     return mono_out;
    
-}
+  }
 #ifdef __cplusplus
 }
 #endif

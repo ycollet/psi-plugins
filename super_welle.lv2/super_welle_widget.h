@@ -433,26 +433,24 @@ public:
         { "XENV4" ,0, 0, 0, 0, 0,  FL_HELVETICA , 10,  0 },
         { 0 }
     }; 
-  const char *wave_menu[9] = {
-      { "Sine" },
-      { "Tri" },
-      { "Saw" },
-      { "Rev Saw" },
-      { "Sqr" },
-      { "Stair" },
-      { "Pulse" },
-      { 0 } }; 
-  const char *filter_types[10] = {
-      { "Bypass" },
-      { "LP12" },
-      { "HP12" },
-      { "BP12" },
-      { "LP24" },
-      { "HP24" },
-      { "BP24" },
-      { "HP6" },
-      { "BP6" },
-      { 0 } }; 
+  const char *wave_menu[9] = {"Sine",
+                              "Tri",
+                              "Saw",
+                              "Rev Saw",
+                              "Sqr",
+                              "Stair",
+                              "Pulse",
+                              0}; 
+  const char *filter_types[10] = {"Bypass",
+                                  "LP12",
+                                  "HP12",
+                                  "BP12",
+                                  "LP24",
+                                  "HP24",
+                                  "BP24",
+                                  "HP6",
+                                  "BP6",
+                                  0}; 
   Fl_Menu_Item env_menu[3] = {
       { "Poly" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
       { "Loop" ,0, 0, 0, 0, 0, FL_HELVETICA , 10,  0 },
