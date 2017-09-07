@@ -142,7 +142,7 @@ void synth_note_off(SWSynth* const s, const uint8_t note, const uint8_t vel);
 
 void synth_midi(SWSynth* const s,const uint8_t* const msg);
 
-voidsynth_free(SWSynth* s);
+void synth_free(SWSynth* s);
 
 static inline sample_t mod_value(SWSynth* const s, ModSource* m) {
   sample_t val = 0;
