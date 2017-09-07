@@ -55,8 +55,6 @@ typedef enum {
   MIDIRND_PENTMN_MSK = 1193
 } ScaleTypeMask;
 
-static LV2_Descriptor *midiRndDescriptor = NULL;
-
 typedef struct _MidiRnd {
   float* channel;
   float* lower;
@@ -219,7 +217,7 @@ static void write_output(MidiRnd* self, uint32_t frames,
   int lower = f_round(*(self->lower));
   int r_upper = f_round(*(self->r_upper));
   int r_lower = f_round(*(self->r_lower));
-  uint16_t scale_mask;
+  uint16_t scale_mask = 0;
     
   const int chn = buffer[0] & 0x0f;
   int mst = buffer[0] & 0xf0;
@@ -231,7 +229,6 @@ static void write_output(MidiRnd* self, uint32_t frames,
     return;
   }
     
-  const uint8_t note = buffer[1] & 0x7f;
   const uint8_t vel  = buffer[2] & 0x7f;
 
   if (mst == LV2_MIDI_MSG_NOTE_ON && vel ==0 ) {
@@ -276,7 +273,7 @@ static void write_output(MidiRnd* self, uint32_t frames,
       if (range!=0) out_note = buffer[1] + rnd_key;
       else out_note = rnd_key;
                  
-      uint16_t note = 1 << (out_note % 12), left = 1;
+      uint16_t note = 1 << (out_note % 12);
       while (!(note & scale_mask)||((out_note+scale_root)>r_upper)) {
         // out of scale or range, generating ia new one 
         if (range != 0)
@@ -299,6 +296,24 @@ static void write_output(MidiRnd* self, uint32_t frames,
       // attempt to map note off to previously generated note-on
       output[1] = self->history[buffer[1]];
       self->history[buffer[1]] = 0;
+      break;
+    case LV2_MIDI_MSG_INVALID:
+    case LV2_MIDI_MSG_NOTE_PRESSURE:
+    case LV2_MIDI_MSG_CONTROLLER:
+    case LV2_MIDI_MSG_PGM_CHANGE:
+    case LV2_MIDI_MSG_CHANNEL_PRESSURE:
+    case LV2_MIDI_MSG_BENDER:
+    case LV2_MIDI_MSG_SYSTEM_EXCLUSIVE:
+    case LV2_MIDI_MSG_MTC_QUARTER:
+    case LV2_MIDI_MSG_SONG_POS:
+    case LV2_MIDI_MSG_SONG_SELECT:
+    case LV2_MIDI_MSG_TUNE_REQUEST:
+    case LV2_MIDI_MSG_CLOCK:
+    case LV2_MIDI_MSG_START:
+    case LV2_MIDI_MSG_CONTINUE:
+    case LV2_MIDI_MSG_STOP:
+    case LV2_MIDI_MSG_ACTIVE_SENSE:
+    case LV2_MIDI_MSG_RESET:
       break;
     }
   }

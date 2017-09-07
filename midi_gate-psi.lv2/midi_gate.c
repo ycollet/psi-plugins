@@ -31,7 +31,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-static LV2_Descriptor *stereoMidiGateDescriptor = NULL;
+//static LV2_Descriptor *stereoMidiGateDescriptor = NULL;
 
 static void connect_port(LV2_Handle instance, uint32_t port, void *data) {
   StereoMidiGate *plugin = (StereoMidiGate *)instance;
@@ -123,8 +123,9 @@ static void activate(LV2_Handle instance) {
   self->program_prev = 0;
 }
 
+/*
 static float iec_scale(float db) {
-  float def = 0.0f; /* Meter deflection %age */
+  float def = 0.0f; // Meter deflection %age
  
   if (db < -70.0f) {
     def = 0.0f;
@@ -146,6 +147,8 @@ static float iec_scale(float db) {
  
   return (def * 2.0f);
 }
+*/
+
 /**
    A function to write a chunk of output, to be called from run(). The 
 */
@@ -157,7 +160,6 @@ static void write_output(StereoMidiGate* self, uint32_t offset, uint32_t len) {
   const float select = *(self->select);
   float const program = *(self->program);
    
-  float gate_state;
   const float * const left_in = self->left_in;
   const float * const right_in = self->right_in;
   float * const left_out = self->left_out;
@@ -172,9 +174,6 @@ static void write_output(StereoMidiGate* self, uint32_t offset, uint32_t len) {
   float cut = DB_CO(range);
   float a_rate = 1000.0f / (attack * fs);
   float d_rate = 1000.0f / (decay * fs);
-  float post_filter_l, apost_filter_l;
-  float post_filter_r, apost_filter_r;
-  float apost_filter, post_filter;
   float peak_m = 0;
     
   int op = f_round(select);
@@ -262,12 +261,7 @@ static void run(LV2_Handle instance, uint32_t sample_count) {
   StereoMidiGate *self = (StereoMidiGate *)instance;
   uint32_t  offset = 0;
   const float select = *(self->select);
-  const float * const left_in = self->left_in;
-  const float * const right_in = self->right_in;
-  float * const left_out = self->left_out;
-  float * const right_out = self->right_out;
     
-  unsigned long pos;
   int op = f_round(select);
     
   if (op == 0) {
