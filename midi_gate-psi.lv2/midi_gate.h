@@ -44,57 +44,57 @@
 #define HOLD    4
 #define CLOSING 5
 
-#define max(a,b) \
-   ({ __typeof__ (a) _a = (a); \
-       __typeof__ (b) _b = (b); \
-     _a > _b ? _a : _b; })
+#define max(a,b)                                \
+  ({ __typeof__ (a) _a = (a);                   \
+    __typeof__ (b) _b = (b);                    \
+    _a > _b ? _a : _b; })
      
 typedef enum {
-    MIDIGATE_MIDI_IN    = 0,
-    MIDIGATE_LEFT_IN    = 1,
-    MIDIGATE_RIGHT_IN   = 2,
-    MIDIGATE_LEFT_OUT   = 3,
-    MIDIGATE_RIGHT_OUT  = 4,
-    MIDIGATE_ATTACK     = 5,
-    MIDIGATE_HOLD       = 6,
-    MIDIGATE_DECAY      = 7,
-    MIDIGATE_RANGE      = 8,
-    MIDIGATE_PROGRAM    = 9,
-    MIDIGATE_SELECT     = 10,
-    MIDIGATE_LEVEL      = 11,
-    MIDIGATE_GATE_STATE = 12
+  MIDIGATE_MIDI_IN    = 0,
+  MIDIGATE_LEFT_IN    = 1,
+  MIDIGATE_RIGHT_IN   = 2,
+  MIDIGATE_LEFT_OUT   = 3,
+  MIDIGATE_RIGHT_OUT  = 4,
+  MIDIGATE_ATTACK     = 5,
+  MIDIGATE_HOLD       = 6,
+  MIDIGATE_DECAY      = 7,
+  MIDIGATE_RANGE      = 8,
+  MIDIGATE_PROGRAM    = 9,
+  MIDIGATE_SELECT     = 10,
+  MIDIGATE_LEVEL      = 11,
+  MIDIGATE_GATE_STATE = 12
     
 } PortIndex;
 
 typedef struct _StereoMidiGate {
-    float *attack;
-    float *hold;
-    float *decay;
-    float *range;
-    float *select;
-    float *level;
-    float *gate_state;
-    float *left_in;
-    float *right_in;
-    float *left_out;
-    float *right_out;
-    float *program;
+  float *attack;
+  float *hold;
+  float *decay;
+  float *range;
+  float *select;
+  float *level;
+  float *gate_state;
+  float *left_in;
+  float *right_in;
+  float *left_out;
+  float *right_out;
+  float *program;
 
-    const LV2_Atom_Sequence* midi_in;
-    float fs;
-    float peak;
-    float gate;
-    int state;
-    int hold_count;
-    int peak_frames;
-    unsigned n_active_notes;
+  const LV2_Atom_Sequence* midi_in;
+  float fs;
+  float peak;
+  float gate;
+  int state;
+  int hold_count;
+  int peak_frames;
+  unsigned n_active_notes;
     
-    unsigned program_prev;
+  unsigned program_prev;
 
-    // Features
-    LV2_URID_Map* map;
+  // Features
+  LV2_URID_Map* map;
 
-    struct {
-        LV2_URID midi_MidiEvent;
-    } uris;
+  struct {
+    LV2_URID midi_MidiEvent;
+  } uris;
 } StereoMidiGate;

@@ -57,76 +57,71 @@
 #define HOLD    4
 #define CLOSING 5
 
-
-typedef struct 
-{
-        LV2_URID atom_Blank;
-        LV2_URID atom_Object;
-        LV2_URID atom_Vector;
-        LV2_URID atom_Float;
-        LV2_URID atom_Int;
-        LV2_URID atom_eventTransfer;
-        LV2_URID atom_Sequence;
-        LV2_URID time_Position;
-        LV2_URID time_barBeat;
-        LV2_URID time_beatsPerMinute;
-        LV2_URID time_speed;
-        LV2_URID time_frame;
-        LV2_URID time_fps;
+typedef struct {
+  LV2_URID atom_Blank;
+  LV2_URID atom_Object;
+  LV2_URID atom_Vector;
+  LV2_URID atom_Float;
+  LV2_URID atom_Int;
+  LV2_URID atom_eventTransfer;
+  LV2_URID atom_Sequence;
+  LV2_URID time_Position;
+  LV2_URID time_barBeat;
+  LV2_URID time_beatsPerMinute;
+  LV2_URID time_speed;
+  LV2_URID time_frame;
+  LV2_URID time_fps;
         
-        LV2_URID UIData;
-        LV2_URID midi_MidiEvent;
-        LV2_URID ui_portNumber;
-        LV2_URID ui_portValue;
-    } SW_LV2_URIS;
+  LV2_URID UIData;
+  LV2_URID midi_MidiEvent;
+  LV2_URID ui_portNumber;
+  LV2_URID ui_portValue;
+} SW_LV2_URIS;
     
-typedef struct _SuperWelle 
-{
-    // lv2 parameters
-    float    *left_in;
-    float    *right_in;
-    float    *left_out;
-    float    *right_out;
-    const LV2_Atom_Sequence* midi_in;
-    LV2_Atom_Sequence*       notify;
-    const LV2_Atom_Sequence* control;
+typedef struct _SuperWelle {
+  // lv2 parameters
+  float    *left_in;
+  float    *right_in;
+  float    *left_out;
+  float    *right_out;
+  const LV2_Atom_Sequence* midi_in;
+  LV2_Atom_Sequence*       notify;
+  const LV2_Atom_Sequence* control;
     
     
-    SWSynth* synth;
-    float* params[V_PARAMS];    
-    sample_t fs;
-    unsigned n_active_notes;
-    Delay*   delay;
+  SWSynth* synth;
+  float* params[V_PARAMS];    
+  sample_t fs;
+  unsigned n_active_notes;
+  Delay*   delay;
     
-    SW_LV2_URIS uris;
-    LV2_URID_Map* map;
-    LV2_Atom_Forge forge;
-    LV2_Atom_Forge_Frame frame;
+  SW_LV2_URIS uris;
+  LV2_URID_Map* map;
+  LV2_Atom_Forge forge;
+  LV2_Atom_Forge_Frame frame;
     
-    LV2_Log_Log*   log;
-    LV2_Log_Logger logger;    
+  LV2_Log_Log*   log;
+  LV2_Log_Logger logger;    
     
 } SuperWelle;
 
-static inline void
-map_uris(LV2_URID_Map* map, SW_LV2_URIS* uris)
-{
-    uris->atom_Blank          = map->map(map->handle, LV2_ATOM__Blank);
-    uris->atom_Object         = map->map(map->handle, LV2_ATOM__Object);
-    uris->atom_Float          = map->map(map->handle, LV2_ATOM__Float);
-    uris->atom_Int            = map->map(map->handle, LV2_ATOM__Int);
-    uris->atom_eventTransfer  = map->map(map->handle, LV2_ATOM__eventTransfer);
-    uris->atom_Sequence       = map->map(map->handle, LV2_ATOM__Sequence);
-    uris->time_Position       = map->map(map->handle, LV2_TIME__Position);
-    uris->time_barBeat        = map->map(map->handle, LV2_TIME__barBeat);
-    uris->time_beatsPerMinute = map->map(map->handle, LV2_TIME__beatsPerMinute);
-    uris->time_speed          = map->map(map->handle, LV2_TIME__speed);
-    uris->time_frame          = map->map(map->handle, LV2_TIME__frame);
-    uris->time_fps            = map->map(map->handle, LV2_TIME__framesPerSecond);
+static inline void map_uris(LV2_URID_Map* map, SW_LV2_URIS* uris) {
+  uris->atom_Blank          = map->map(map->handle, LV2_ATOM__Blank);
+  uris->atom_Object         = map->map(map->handle, LV2_ATOM__Object);
+  uris->atom_Float          = map->map(map->handle, LV2_ATOM__Float);
+  uris->atom_Int            = map->map(map->handle, LV2_ATOM__Int);
+  uris->atom_eventTransfer  = map->map(map->handle, LV2_ATOM__eventTransfer);
+  uris->atom_Sequence       = map->map(map->handle, LV2_ATOM__Sequence);
+  uris->time_Position       = map->map(map->handle, LV2_TIME__Position);
+  uris->time_barBeat        = map->map(map->handle, LV2_TIME__barBeat);
+  uris->time_beatsPerMinute = map->map(map->handle, LV2_TIME__beatsPerMinute);
+  uris->time_speed          = map->map(map->handle, LV2_TIME__speed);
+  uris->time_frame          = map->map(map->handle, LV2_TIME__frame);
+  uris->time_fps            = map->map(map->handle, LV2_TIME__framesPerSecond);
     
-    uris->UIData              = map->map(map->handle, SW_URI "#UIData");
-    uris->midi_MidiEvent      = map->map(map->handle, LV2_MIDI__MidiEvent);
-    uris->ui_portNumber       = map->map(map->handle, SW_URI "#ui_portNumber");
-    uris->ui_portValue        = map->map(map->handle, SW_URI "#ui_portValue");
+  uris->UIData              = map->map(map->handle, SW_URI "#UIData");
+  uris->midi_MidiEvent      = map->map(map->handle, LV2_MIDI__MidiEvent);
+  uris->ui_portNumber       = map->map(map->handle, SW_URI "#ui_portNumber");
+  uris->ui_portValue        = map->map(map->handle, SW_URI "#ui_portValue");
 }
 #endif  /* SUPERWELLE_H */
