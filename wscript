@@ -20,8 +20,8 @@ VERSION = '0.0.1'
 top = '.'
 out = 'build'
 
-CFLAGS='-g -O2 -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches  -m64 -mtune=generic'.split(' ')
-CXXFLAGS='-g -O2 -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches  -m64 -mtune=generic -fomit-frame-pointer -ftree-loop-linear -ffinite-math-only -fno-math-errno -fno-signed-zeros -fstrength-reduce -std=c++11'.split(' ')
+#CFLAGS='-g -O2 -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches  -m64 -mtune=generic'.split(' ')
+#CXXFLAGS='-g -O2 -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches  -m64 -mtune=generic -fomit-frame-pointer -ftree-loop-linear -ffinite-math-only -fno-math-errno -fno-signed-zeros -fstrength-reduce -std=c++11'.split(' ')
 
 def options(opt):
     opt.load('compiler_c')
@@ -35,8 +35,8 @@ def configure(conf):
 
     autowaf.configure(conf)
     autowaf.set_c99_mode(conf)
-    conf.env.append_unique('CFLAGS', CFLAGS )
-    conf.env.append_unique('CXXFLAGS', CXXFLAGS )
+#    conf.env.append_unique('CFLAGS', CFLAGS )
+#    conf.env.append_unique('CXXFLAGS', CXXFLAGS )
 
 
 
