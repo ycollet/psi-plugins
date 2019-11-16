@@ -27,12 +27,14 @@
 #ifndef OSCILLATOR_H
 #define OSCILLATOR_H
 
-#include "types.h"
 #include <math.h>
 #include <stdlib.h>
+
+#include "types.h"
 #include "ladspa-util.h"
 #include "osc_common.h"
 #include "bl_osc.h"
+
 #define TWO_PI  (2 * 3.14159265)
 
 typedef struct _oscwave {

@@ -23,10 +23,8 @@ def configure(conf):
     if not autowaf.is_child():
         autowaf.check_pkg(conf, 'lv2', uselib_store='LV2')
         
-    autowaf.check_pkg(conf, 'ntk', uselib_store='NTK',
-        mandatory=True)    
-    autowaf.check_pkg(conf, 'ntk_images', uselib_store='NTK_IMAGES',
-        mandatory=True)    
+    autowaf.check_pkg(conf, 'ntk', uselib_store='NTK', mandatory=True)    
+    autowaf.check_pkg(conf, 'ntk_images', uselib_store='NTK_IMAGES', mandatory=True)    
     autowaf.display_msg(conf, 'LV2 bundle directory', conf.env.LV2DIR)
     print('')
     conf.env.CXXFLAGS.append('-DLV2_DIR="'+conf.env.LV2DIR+'"')
@@ -57,13 +55,13 @@ def build(bld):
     includes = ['../UI','/usr/include','../util','../common']
     print bld.env.cflags
     # Build plugin library
+    bld.read_shlib('m')
     obj = bld(features     = 'c cshlib',
               source       = ['../common/bl_osc.c','../common/voice.c','synth.c','super_welle.c'],
               name         = 'super_welle',
               target       = '%s/super_welle' % bundle,
               install_path = '${LV2DIR}/%s' % bundle,
               uselib       = ['LV2','M','stdc++'],
-              #cflags       = '-O2 -Wall -msse -mfpmath=sse',
               includes     = includes)
     obj.env.cshlib_PATTERN = module_pat
     # Build plugin UI library # 3

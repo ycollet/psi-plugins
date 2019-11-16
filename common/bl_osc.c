@@ -336,3 +336,24 @@ void bl_wave_osc(int shape, float *waveSamples, int tableLen) {
     
   bl_fill_tables(shape, freqWaveRe, freqWaveIm, tableLen);
 }
+
+void bl_freq(BL_Osc* b, sample_t inc) {
+  b->freq = inc;
+}
+
+void bl_phase_offset(BL_Osc* b, sample_t offset) {
+  b->phaseOfs = offset;
+}
+
+void bl_update_phase(BL_Osc* b) {
+  b->phasor += b->freq;
+    
+  if (b->phasor >= 1.0)
+    b->phasor -= 1.0;
+}
+
+void BL_Osc_init(BL_Osc* b) {
+  b->phasor = 0.0;
+  b->freq = 0.0;
+  b->phaseOfs = 0.5;
+}

@@ -1,8 +1,10 @@
 #ifndef LS_FER_H
 #define LS_FER_H
 
+#include <math.h>
+
 #include "types.h"
-#include <biquad.h>
+#include "biquad.h"
 
 #define FILT_MIDI_2_FRQ(m) (m * 80.0f + 10.0f)
 #define FILT_MIDI_2_RESO(m) (m * 0.00787f)

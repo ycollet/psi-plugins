@@ -28,6 +28,8 @@
 #ifndef VOICE_H
 #define VOICE_H
 
+#include <math.h>
+
 #include "types.h"
 #include "voice_params.h"
 #include "adsr.h"

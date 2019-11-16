@@ -25,9 +25,11 @@
  */
 
 #ifndef FILTER_H
-
 #define FILTER_H
+
 #include <stdlib.h>
+#include <math.h>
+
 #include "types.h"
 #include "interp.h"
 #include "decim.h"

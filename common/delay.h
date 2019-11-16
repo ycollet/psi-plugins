@@ -26,6 +26,9 @@
 
 #ifndef DELAY_H
 #define DELAY_H
+
+#include <math.h>
+
 #include "types.h"
 
 #ifndef CF_WIN

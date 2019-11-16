@@ -26,6 +26,8 @@
 #ifndef BL_OSC_H
 #define BL_OSC_H
 
+#include <math.h>
+
 #include "types.h"
 #include "osc_common.h"
 
@@ -55,13 +57,13 @@ typedef struct {
   int       shape;
 } BL_Osc;
 
-inline void BL_Osc_init(BL_Osc* b);
+void BL_Osc_init(BL_Osc* b);
 
-inline void bl_freq(BL_Osc* b, sample_t inc);
+void bl_freq(BL_Osc* b, sample_t inc);
 
-inline void bl_phase_offset(BL_Osc* b, sample_t offset);
+void bl_phase_offset(BL_Osc* b, sample_t offset);
 
-inline void bl_update_phase(BL_Osc* b);
+void bl_update_phase(BL_Osc* b);
 
 float bl_output(BL_Osc* b);
 
@@ -78,26 +80,5 @@ float bl_make_WaveTable(int shp, int len, sample_t *ar, sample_t *ai, sample_t s
 void bl_saw_osc(long tableLen);
 
 void bl_wave_osc(int shape, float *waveSamples, int tableLen);
-
-inline void bl_freq(BL_Osc* b, sample_t inc) {
-  b->freq = inc;
-}
-
-inline void bl_phase_offset(BL_Osc* b, sample_t offset) {
-  b->phaseOfs = offset;
-}
-
-inline void bl_update_phase(BL_Osc* b) {
-  b->phasor += b->freq;
-    
-  if (b->phasor >= 1.0)
-    b->phasor -= 1.0;
-}
-
-inline void BL_Osc_init(BL_Osc* b) {
-  b->phasor = 0.0;
-  b->freq = 0.0;
-  b->phaseOfs = 0.5;
-}
 
 #endif

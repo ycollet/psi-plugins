@@ -31,7 +31,8 @@
 #ifndef ROLAND_H
 #define ROLAND_H
 
-#include "math.h"
+#include <math.h>
+
 #include "types.h"
 
 typedef struct _roland {
