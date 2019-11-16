@@ -1,9 +1,10 @@
 //#include "roland.h"
-#include "adsr.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
+#include "adsr.h"
 #include "pink_noise.h"
 
 #ifndef SAMPLE_T

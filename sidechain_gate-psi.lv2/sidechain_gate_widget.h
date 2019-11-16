@@ -2,8 +2,7 @@
 
 #ifndef sidechain_gate_widget_h
 #define sidechain_gate_widget_h
-#include <FL/Fl.H>
-#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+
 #include <FL/Fl.H>
 #include <FL/Fl_Value_Output.H>
 #include <FL/Fl_Value_Input.H>
@@ -15,19 +14,25 @@
 #include <FL/Fl_XPM_Image.H>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Fill_Slider.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Box.H>
+
+#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+
 #include "UI/Envelope.H"
 #include "UI/PeakMeter.H"
 #include "UI/psiDialX.H"
 #include "UI/psiLabelBox.H"
+
 #include "sidechain_gate.h"
+
 #ifndef LV2_DIR 
 #define LV2_DIR "/usr/lib64/lv2" 
 #endif
-#include <FL/Fl_Double_Window.H>
+
 using namespace std;
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Light_Button.H>
-#include <FL/Fl_Box.H>
 
 class SidechainGateUI {
 public:

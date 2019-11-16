@@ -2,7 +2,8 @@
 version 1.0300 
 header_name {.h} 
 code_name {.cxx}
-decl {\#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"} {public global
+
+decl {\#include <math.h>} {public global
 } 
 
 decl {\#include <FL/Fl_Value_Output.H>} {public global
@@ -29,6 +30,12 @@ decl {\#include <FL/Fl_PNG_Image.H>} {public global
 decl {\#include <FL/Fl_Tooltip.H>} {public global
 } 
 
+decl {\#include <FL/Fl_Slider.H>} {public global
+}
+
+decl {\#include <FL/Fl_Theme.H>} {public global
+} 
+
 decl {\#include "UI/Envelope.H"} {public global
 } 
 
@@ -41,10 +48,10 @@ decl {\#include "UI/PeakMeter.H"} {public global
 decl {\#include "UI/psiLabelBox.H"} {public global
 } 
 
-decl {\#include "midi_gate.h"} {public global
+decl {\#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"} {public global
 } 
 
-decl {\#include <math.h>} {public global
+decl {\#include "midi_gate.h"} {public global
 } 
 
 decl {\#ifndef LV2_DIR 
@@ -241,9 +248,4 @@ Fl::flush();} {}
   } {
     code {write_function(controller, port, sizeof(float), 0, &value);} {}
   }
-  decl {\#include <FL/Fl_Slider.H>} {public global
-  }
-} 
-
-decl {\#include <FL/Fl_Theme.H>} {public global
 } 

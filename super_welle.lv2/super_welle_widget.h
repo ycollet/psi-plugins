@@ -2,8 +2,10 @@
 
 #ifndef super_welle_widget_h
 #define super_welle_widget_h
-#include <FL/Fl.H>
+
 #include <math.h>
+
+#include <FL/Fl.H>
 #include <FL/Fl_Value_Output.H>
 #include <FL/Fl_Value_Input.H>
 #include <FL/Fl_Int_Input.H>
@@ -16,6 +18,12 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Theme.H>
 #include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Output.H>
+
+#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+
 #include "UI/Envelope.H"
 #include "UI/psiDialX.H"
 #include "UI/psiLabelBox.H"
@@ -24,18 +32,19 @@
 #include "UI/psiLFO.H"
 #include "UI/psiENV.H"
 #include "UI/psiDialX_Mod.H"
-#include "super_welle.h"
 #include "UI/psiMidiMapping.H"
-#include "common/voice_params.h"
-    #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+
 #define UI_CLASS SuperWelleUI
 #ifndef LV2_DIR 
 #define LV2_DIR "/usr/lib64/lv2" 
 #endif
+
 using namespace std;
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Output.H>
+
+extern "C" {
+#include "super_welle.h"
+#include "common/voice_params.h"
+}
 
 class SuperWelleUI {
 public:

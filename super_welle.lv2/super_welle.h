@@ -27,6 +27,8 @@
 #ifndef SUPER_WELLE_H
 #define SUPER_WELLE_H
 
+#include <math.h>
+
 #undef Bool
 #define SW_URI "http://bjones.it/psi-plugins/super_welle"
 #define SW_UI_URI "http://bjones.it/psi-plugins/super_welle/ui"
@@ -44,8 +46,6 @@
 #include "types.h"
 #include "synth.h"
 #include "filter.h"
-
-#include <math.h>
 
 #define ENV_TR 0.0001f
 #define MAX_DLY 48000 

@@ -17,17 +17,11 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#include "ladspa-util.h"
 #include <stdio.h>
-
-#define max(a,b)                                \
-  ({ __typeof__ (a) _a = (a);                   \
-    __typeof__ (b) _b = (b);                    \
-    _a > _b ? _a : _b; })
-     
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "lv2.h"
 
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
@@ -37,7 +31,14 @@
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
+#include "ladspa-util.h"
+
 #define MIDIRND_URI "http://bjones.it/psi-plugins/midi_rnd"
+
+#define max(a,b)                                \
+  ({ __typeof__ (a) _a = (a);                   \
+    __typeof__ (b) _b = (b);                    \
+    _a > _b ? _a : _b; })
 
 typedef enum {
   MIDIRND_CHROM      = 0,

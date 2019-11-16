@@ -2,6 +2,7 @@
 version 1.0300 
 header_name {.h} 
 code_name {.cxx}
+
 decl {\#include <math.h>} {public global
 } 
 
@@ -41,6 +42,9 @@ decl {\#include <FL/Fl_Theme.H>} {public global
 decl {\#include <FL/Fl_Tooltip.H>} {public global
 } 
 
+decl {\#include <FL/Fl_Button.H>} {public global
+} 
+
 decl {\#include "UI/Envelope.H"} {public global
 } 
 
@@ -71,8 +75,11 @@ decl {\#include "super_welle.h"} {public global
 decl {\#include "UI/psiMidiMapping.H"} {public global
 } 
 
-decl {\#include "common/voice_params.h"
-    \#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"} {public global
+decl {
+\extern "C" {
+\#include "common/voice_params.h"
+\#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"} {public global
+\}
 } 
 
 decl {\#define UI_CLASS SuperWelleUI} {public global
@@ -1066,10 +1073,4 @@ Fl::flush();} {}
   } {
     code {return window->h();} {}
   }
-} 
-
-decl {\#include <FL/Fl_Slider.H>} {public global
-} 
-
-decl {\#include <FL/Fl_Button.H>} {public global
 } 

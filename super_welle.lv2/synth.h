@@ -25,17 +25,18 @@
 #ifndef SYNTH_H
 #define SYNTH_H
 
-#include "common/types.h"
-#include "common/voice.h"
+#include <stdlib.h>
+
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 
+#include "common/types.h"
+#include "common/voice.h"
 #include "common/adsr.h"
 #include "common/oscillator.h"
 #include "common/ls_filter.h"
 #include "common/roland.h"
 #include "common/filter.h"
 #include "common/delay.h"
-#include <stdlib.h>
 
 /* 
  * the number of concurrent voices for the same midi note

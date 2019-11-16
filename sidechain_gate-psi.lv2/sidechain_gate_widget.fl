@@ -2,8 +2,6 @@
 version 1.0300 
 header_name {.h} 
 code_name {.cxx}
-decl {\#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"} {public global
-} 
 
 decl {\#include <FL/Fl.H>} {public global
 } 
@@ -36,6 +34,9 @@ decl {\#include <FL/Fl_PNG_Image.H>} {public global
 } 
 
 decl {\#include <FL/Fl_Fill_Slider.H>} {public global
+} 
+
+decl {\#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"} {public global
 } 
 
 decl {\#include "UI/Envelope.H"} {public global
@@ -394,9 +395,5 @@ Fl::flush();} {}
   Function {writePort(int port, float value)} {open
   } {
     code {write_function(controller, port, sizeof(float), 0, &value);} {}
-  }
-  decl {\#include <FL/Fl_Slider.H>} {public global
-  }
-  decl {\#include <FL/Fl_Theme.H>} {public global
   }
 } 

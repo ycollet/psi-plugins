@@ -1,8 +1,10 @@
 #ifndef PSILABELBOX_H
 #define PSILABELBOX_H
-#include <FL/Fl_Widget.H>
+
 #include <valarray>
 #include <string>
+
+#include <FL/Fl_Widget.H>
 
 #include "ui_util.h"
 

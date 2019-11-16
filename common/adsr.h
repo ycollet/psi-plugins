@@ -26,7 +26,9 @@
 
 #ifndef ADRS_h
 #define ADRS_h
+
 #include <math.h>
+
 #include "types.h"
 
 enum envState {

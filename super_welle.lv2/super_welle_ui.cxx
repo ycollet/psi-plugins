@@ -32,11 +32,14 @@
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
-#include "super_welle.h"
 
 #include "super_welle_widget.h"
+
+extern "C" {
+#include "super_welle.h"
 #include "synth.h"
 #include "common/voice_params.h"
+}
 
 using namespace std;
 

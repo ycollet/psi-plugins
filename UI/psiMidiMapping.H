@@ -1,17 +1,21 @@
 #ifndef PSIMIDIMAPPING_H
 #define PSIMIDIMAPPING_H
 
+#include <stdlib.h>
+#include <math.h>
+
+#include <string>
+#include <vector>
+#include <array>
+
+#include <lo/lo_osc_types.h>
+
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Theme.H>
 #include <FL/Fl_Menu.H>
-#include <string>
-#include <vector>
-#include <array>
-#include <stdlib.h>
-#include <math.h>
-#include <lo/lo_osc_types.h>
+
 #include "voice_params.h"
 #include "midi_map.h"
 #include "ui_util.h"

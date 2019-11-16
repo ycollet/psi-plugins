@@ -28,6 +28,9 @@
  * 
  */
 
+#include <math.h>
+#include <stdlib.h>
+
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
@@ -35,9 +38,6 @@
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 #include "sidechain_gate.h"
-
-#include <math.h>
-#include <stdlib.h>
 
 static void connect_port(LV2_Handle instance, uint32_t port, void *data) {
   SidechainGate *plugin = (SidechainGate *)instance;

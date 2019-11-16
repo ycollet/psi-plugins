@@ -1,11 +1,13 @@
 #ifndef UI_UTIL_H
 #define UI_UTIL_H
 
+#include <stdlib.h>
+
 #include <cairo/cairo.h>
+
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Button.H>
 #include <Fl/Fl_Menu_Item.H>
-#include <stdlib.h>
 
 // converts a 32 bit color to RGB (Fl_Color is the topmost 3 bytes)
 __attribute__((unused)) 

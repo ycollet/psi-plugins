@@ -1,6 +1,8 @@
 #ifndef BIQUAD_H
 #define BIQUAD_H
 
+#include <math.h>
+
 #ifndef LN_2_2
 # define LN_2_2 0.34657359f // ln(2)/2
 #endif
@@ -14,7 +16,6 @@
 #endif
 
 #include "ladspa-util.h"
-#include <math.h>
 
 #ifndef LIMIT
 #define LIMIT(v,l,u) (v<l?l:(v>u?u:v))

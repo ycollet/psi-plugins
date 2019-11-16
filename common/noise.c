@@ -1,6 +1,6 @@
+#include <math.h>
 
 #include "noise.h"
-#include <math.h>
 
 // make noise - from audacity
 bool makeNoise(int noiseType,float *buffer, int len, float fs, float amplitude) {

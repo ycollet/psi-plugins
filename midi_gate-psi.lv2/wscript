@@ -62,7 +62,8 @@ def build(bld):
               target       = '%s/midi_gate' % bundle,
               install_path = '${LV2DIR}/%s' % bundle,
               uselib       = ['LV2','M'],
-              cflags       = '-Wall -std=c++11',
+              cflags       = '-Wall',
+              lib          = ['m'],
               includes     = includes)
     obj.env.cshlib_PATTERN = module_pat
     obj.env.cxxshlib_PATTERN = module_pat
@@ -74,6 +75,7 @@ def build(bld):
               install_path = '${LV2DIR}/%s' % bundle,
               uselib       = 'LV2 M NTK NTK_IMAGES',
               cflags       = '-Wall -std=c++11',
+              lib          = ['m'],
               includes     = includes)
     obj.env.cxxshlib_PATTERN = module_pat
 

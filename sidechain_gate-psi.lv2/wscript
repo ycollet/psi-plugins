@@ -63,6 +63,7 @@ def build(bld):
               install_path = '${LV2DIR}/%s' % bundle,
               uselib       = ['LV2','M'],
               cflags       = '-Wall',
+              lib          = ['m'],
               includes     = includes)
     obj.env.cshlib_PATTERN = module_pat
     obj.env.cxxshlib_PATTERN = module_pat
@@ -74,6 +75,7 @@ def build(bld):
               install_path = '${LV2DIR}/%s' % bundle,
               uselib       = 'LV2 M NTK NTK_IMAGES',
               cflags       = '-Wall',
+              lib          = ['m'],
               includes     = includes)
     obj.env.cxxshlib_PATTERN = module_pat
 

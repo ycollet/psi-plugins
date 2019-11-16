@@ -24,8 +24,9 @@
  * @section DESCRIPTION
  */
 
-#include <FL/Fl_Box.H>
 #include <stdio.h>
+
+#include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
 
 namespace psi

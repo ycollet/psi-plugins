@@ -24,12 +24,12 @@
  * @section DESCRIPTION
  */
 
-#include "ladspa-util.h"
 #include <stdio.h>
-
-#include "midi_gate.h"
 #include <math.h>
 #include <stdlib.h>
+
+#include "ladspa-util.h"
+#include "midi_gate.h"
 
 //static LV2_Descriptor *stereoMidiGateDescriptor = NULL;
 

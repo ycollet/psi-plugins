@@ -55,22 +55,25 @@ def build(bld):
     includes = ['../UI','/usr/include','../util','../common']
     print bld.env.cflags
     # Build plugin library
-    bld.read_shlib('m')
     obj = bld(features     = 'c cshlib',
               source       = ['../common/bl_osc.c','../common/voice.c','synth.c','super_welle.c'],
               name         = 'super_welle',
               target       = '%s/super_welle' % bundle,
+              cflags       = '-fPIC',
               install_path = '${LV2DIR}/%s' % bundle,
               uselib       = ['LV2','M','stdc++'],
+              lib          = ['m'], 
               includes     = includes)
     obj.env.cshlib_PATTERN = module_pat
     # Build plugin UI library # 3
-    obj = bld(features     = 'cxx cxxshlib',
-              source       = ['../UI/psiDialX.cxx','super_welle_widget.cxx','super_welle_ui.cxx'],
+    obj = bld(features     = 'c cxx cxxshlib',
+              source       = ['../common/bl_osc.c','../UI/psiDialX.cxx','super_welle_widget.cxx','super_welle_ui.cxx'],
               name         = 'super_welle_ui',
               target       = '%s/super_welle_ui' % bundle,
+              cflags       = '-fPIC',
               install_path = '${LV2DIR}/%s' % bundle,
               uselib       = 'LV2 M NTK NTK_IMAGES',
+              lib          = ['m'], 
               includes     = includes)
     obj.env.cxxshlib_PATTERN = module_pat
 

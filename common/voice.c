@@ -24,11 +24,11 @@
  * @section DESCRIPTION
  */
 
+#include <stdio.h>
+
 #include "voice_params.h"
 #include "voice.h"
 #include "roland.h"
-
-#include <stdio.h>
 
 #define LSF_BW 0.9
 #define LSF_FB 0.9f

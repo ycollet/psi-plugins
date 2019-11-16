@@ -25,6 +25,7 @@
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+
 #include "sidechain_gate_widget.h"
 
 using namespace std;

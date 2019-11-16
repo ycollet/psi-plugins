@@ -24,16 +24,19 @@
  * @section DESCRIPTION
  */
 
-#include <psiDialX.H>
 
-#include <FL/fl_draw.H>
-#include <FL/Fl.H>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+
 #include <algorithm>
 #include <iostream>
+
+#include <FL/fl_draw.H>
+#include <FL/Fl.H>
 #include <FL/Fl_Shared_Image.H>
+
+#include "psiDialX.H"
 #include "ui_util.h"
 
 class image_node {

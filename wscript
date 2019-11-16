@@ -29,7 +29,6 @@ def configure(conf):
 
     conf.load('compiler_c')
     conf.load('compiler_cxx')
-    conf.env.append_value('LINKFLAGS', '-lm')
     
     autowaf.configure(conf)
     autowaf.set_c99_mode(conf)

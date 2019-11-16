@@ -26,14 +26,16 @@
 
 #pragma once
 
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+
+#include <iostream>
+
 #include <FL/Fl_Dial_Base.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
-#include <string.h>
-#include <math.h>
-#include <stdlib.h>
-#include <iostream>
 
 extern bool default_draw_value_box;
 

@@ -18,9 +18,10 @@
   Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <stdio.h>
+
 #include "ladspa-util.h"
 #include "biquad.h"
-#include <stdio.h>
 
 #define ENV_TR 0.0001f
 

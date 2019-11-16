@@ -2,8 +2,10 @@
 
 #ifndef midi_gate_widget_h
 #define midi_gate_widget_h
+
+#include <math.h>
+
 #include <FL/Fl.H>
-#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 #include <FL/Fl_Value_Output.H>
 #include <FL/Fl_Value_Input.H>
 #include <FL/Fl_Dial.H>
@@ -12,20 +14,25 @@
 #include <FL/Fl_Fill_Slider.H>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Output.H>
+
+#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+
 #include "UI/Envelope.H"
 #include "UI/psiDialX.H"
 #include "UI/PeakMeter.H"
 #include "UI/psiLabelBox.H"
+
 #include "midi_gate.h"
-#include <math.h>
+
 #ifndef LV2_DIR 
 #define LV2_DIR "/usr/lib64/lv2" 
 #endif
-#include <FL/Fl_Double_Window.H>
+
 using namespace std;
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Light_Button.H>
-#include <FL/Fl_Output.H>
 
 class MidiGateUI {
 public:

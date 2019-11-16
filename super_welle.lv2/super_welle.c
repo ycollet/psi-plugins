@@ -28,8 +28,8 @@
 #include "common/ladspa-util.h"
 #include "common/voice_params.h"
 #include "common/voice.h"
-#include "synth.h"
 #include "common/bl_osc.h"
+#include "synth.h"
 
 #define LSF_BW 0.9
 #define LSF_FB 0.9f
