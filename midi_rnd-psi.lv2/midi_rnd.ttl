@@ -15,7 +15,7 @@
    foaf:homepage <http://bjones.it/> .
 
 <http://bjones.it/psi-plugins/midi_rnd>
-   a lv2:Plugin, lv2:GatePlugin;
+   a lv2:Plugin, lv2:UtilityPlugin;
    doap:name "Random MIDI" ;
    doap:maintainer <http://bjones.it/who/bsjones> ;
    doap:license <http://usefulinc.com/doap/licenses/gpl> ;
