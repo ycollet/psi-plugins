@@ -64,5 +64,5 @@ def build(bld):
 
     # Build plugins
     for i in bld.env.LV2_BUILD:
-        print i
+        print (i)
         bld.recurse(i)

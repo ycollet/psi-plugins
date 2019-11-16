@@ -2,8 +2,8 @@
 #define UI_UTIL_H
 
 #include <cairo/cairo.h>
-#include <Fl/Fl_Menu_Button.h>
-#include <Fl/Fl_Button.h>
+#include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Button.H>
 #include <Fl/Fl_Menu_Item.H>
 #include <stdlib.h>
 
