@@ -1,9 +1,9 @@
 #ifndef PSIDIALXMOD_H
 #define PSIDIALXMOD_H
 
-#include <Fl/Fl_Group.H>
-#include <Fl/Fl_Button.H>
-#include <Fl/Fl_Menu_Item.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Menu_Item.H>
 
 #include "UI/ui_util.h"
 #include "UI/psiLabelBox.H"
