@@ -12,6 +12,7 @@ configure_file(sidechain_gate-psi.lv2/manifest.ttl.in ${CMAKE_BINARY_DIR}/sidech
 configure_file(super_welle.lv2/manifest.ttl.in        ${CMAKE_BINARY_DIR}/super_welle.lv2/manifest.ttl)
 
 pkg_search_module(NTK REQUIRED ntk)
+pkg_search_module(LV2 REQUIRED lv2)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive")
 
@@ -39,7 +40,8 @@ include_directories(.
   midi_rnd-psi.lv2
   sidechain_gate-psi.lv2
   super_welle.lv2
-  ${NTK_INCLUDE_DIRS})
+  ${NTK_INCLUDE_DIRS}
+  ${LV2_INCLUDE_DIRS})
 
 add_library(midi_gate SHARED ${MIDIGATE_SRCS})
 add_library(midi_gate_ui SHARED ${MIDIGATE_UI_SRCS})
